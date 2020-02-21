@@ -1,0 +1,14 @@
+{
+  "name": "vue_composition_api_rfc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "liuycy <liuycy@yeah.net>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vuepress dev doc",
+    "build": "vuepress build doc"
+  },
+  "devDependencies": {
+    "vuepress": "^1.3.0"
+  }
+}
