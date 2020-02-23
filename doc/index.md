@@ -1,0 +1,641 @@
+---
+sidebar: auto
+---
+
+# Composition API RFC
+
+- 开始日期: 2019-07-10
+- 目标版本: 2.x / 3.x
+- 参考 Issues: [#42](https://github.com/vuejs/rfcs/pull/42)
+- 实现 PR: (留空)
+
+> 由于英文水平有限, 每次看[原文](https://vue-composition-api-rfc.netlify.com/)都比较费劲, 所以参考[尤雨溪在知乎上的翻译](https://zhuanlan.zhihu.com/p/68477600)简单翻译成中文, 方便下次阅读
+
+
+## 概要
+
+**Composition API** 简介: 一套允许灵活组合组件逻辑的附加的 API 函数. 
+
+## 基本用例
+
+```vue
+<template>
+  <button @click="increment">
+    Count is: {{ state.count }}, double is: {{ state.double }}
+  </button>
+</template>
+
+<script>
+import { reactive, computed } from 'vue'
+
+export default {
+  setup() {
+    const state = reactive({
+      count: 0,
+      double: computed(() => state.count * 2)
+    })
+
+    function increment() {
+      state.count++
+    }
+
+    return {
+      state,
+      increment
+    }
+  }
+}
+</script>
+```
+
+## 动机
+
+### 逻辑复用 & 代码组织
+
+Vue 容易上手, 方便构建中小型应用. 随着用户增长, 人们开始用 Vue 构建大型应用(多人合作长期迭代维护的那种). Vue 现有的 API 的限制会带来很多问题, 大致可以分为两类: 
+
+1. 随着功能的迭代, 组件越来越复杂且难以读懂, 尤其是当你读别人写的代码时. 根本原因就是 Vue 现有 API 要求你使用选项来组织代码, 但有时根据逻辑关系组织代码更有意义
+
+2. 缺少一种干净且无成本的机制来抽离和复用多个组件间的逻辑. (详见[逻辑提取和复用](#逻辑提取和复用))
+
+RFC 中提出的 API 为用户组织代码提供更大的灵活性. 现在的 API 可以按功能将代码组织成函数片段, 不再要求写在选项里了, 而且让组件间或组件外的逻辑更容易抽离和复用. 
+具体实现请看[设计细节](#设计细节)
+
+### 更好的类型推断
+
+在开发大型应用时, 开发者的另一个常见需求是支持 TypeScript. Vue 与 TypeScript 集成有点困难, 只要是因为 `this` 在 Vue 组件中比普通 JavaScript 多了一些属性 
+(例如: 在 `methods` 选项中定义的函数里 `this` 指向的是 Vue 组件实例, 而不是 `methods` 这个对象). 换言之, Vue 在设计之初没有考虑到类型推断, 导致现在与 TypeScript 结合很困难. 
+
+现在大多数使用 TypeScript 写 Vue 的用户都在使用 `vue-class-component` 库, 一个使用 TypeScript Class (结合 decorators) 来定义组件的库. 
+在设计 3.0 之初, 我们原本打算提供一个内置 Class API 来更好地解决类型问题(详见[之前的 RFC(已废弃)](https://github.com/vuejs/rfcs/pull/17)). 
+但当我们讨论并迭代设计时, 发现使用 Class API 必须依赖 decorators (这是一个非常不稳定的 `stage 2` 提案, 在实现细节上仍有许多不确定性), 这会很冒险. 
+(更多细节请看[Class API 的类型问题](#class-api-的类型问题)). 
+
+相比之下, 这个 RFC 提出的 API 基本上使用的都是本身就类型友好的普通变量和函数, 使用这些 API 几乎不需要手写类型提示就能享受到完整的类型推断. 
+也就是说, 这些 API 用 TypeScript 或 JavaScript 写看起来都基本是一样的, 所以即使是非 TypeScript 用户也能从 IDE 自带的类型提示中受益. 
+
+## 设计细节
+
+### API 简介
+
+这里提出的 API 没有引入新概念, 而是将 Vue 的核心功能(如: 创建和监听响应式属性)作为独立的函数暴露出来. 
+我们将介绍最基本的几个 API 以及如何使用它们代替 2.x 的选项. 注意本节主要介绍基本概念, 详细完整的 API 请查看[API Reference](/API)
+
+#### 响应式属性和副作用
+
+从简单的任务开始: 声明一些响应式属性
+
+```js
+import { reactive } from 'vue'
+
+// 响应式属性
+const state = reactive({
+  count: 0
+})
+```
+
+`reactive` 相当于 2.x 的 `Vue.observable()`, 为防止与 RxJS 的 observables 冲突就改名叫 `reactive` 了. 
+这个函数返回的是一个 Vue 用户都相当熟悉的响应式对象. 
+
+响应式属性最基本的用途就是在 Vue 渲染期间使用它, 由于依赖跟踪, 视图会在响应式属性改变时自动更新. 
+在 DOM 中渲染一些东西可以被视为一种"副作用"(程序在修改程序外部的状态). 
+要根据响应式属性来触发和重新触发一种副作用的话, 我们需要用到 `watch` API: 
+
+```js
+import { reactive, watch } from 'vue'
+
+const state = reactive({
+  count: 0
+})
+
+watch(() => {
+  document.body.innerHTML = `count is ${state.count}`
+})
+```
+
+`watch` 需要传入一个回调函数来触发副作用(在上例中, 设置 `innerHTML` 为副作用). 
+回调函数会立即被调用, 并将所有它用到的响应式属性作为依赖跟踪. 在上例中, `state.count` 会在回调函数调用后被作为依赖跟踪. 
+将来 `state.count` 发生改变时, 回调函数会被再次调用. 
+
+这就是 Vue 响应式系统的基本原理. 当你在组件的 `data()` 返回一个对象时, 在内部会调用 `reactive()` 将它变成响应式的. 
+使用这些响应式属性的模板会被编译成 render 函数 (可以认为是更高效的 `innerHTML`)
+
+继续上面这个例子, 我们加上处理用户输入的逻辑: 
+
+```js
+function increment() {
+  state.count++
+}
+
+document.body.addEventListener('click', increment)
+```
+
+不过利用 Vue 的模板系统, 我们不必手写 innerHTML 或 事件监听的处理函数, 我们先用伪代码 `renderTemplate` 来简化一下例子, 把心思放在响应式这块: 
+
+```js
+import { reactive, watch } from 'vue'
+
+const state = reactive({
+  count: 0
+})
+
+function increment() {
+  state.count++
+}
+
+const renderContext = {
+  state,
+  increment
+}
+
+watch(() => {
+  // 伪代码, 不是真实 API
+  renderTemplate(
+    `<button @click="increment">{{ state.count }}</button>`,
+    renderContext
+  )
+})
+```
+
+#### 计算属性和 Refs
+
+有时我们需要一个随其他状态变化而变化的属性 - 在 Vue 中, 这是通过 *计算属性* 来实现的. 
+我们现在可以使用 `computed` API 来直接创建一个计算属性: 
+
+```js
+import { reactive, computed } from 'vue'
+
+const state = reactive({
+  count: 0
+})
+
+const double = computed(() => state.count * 2)
+```
+
+上例中 `computed` 会返回什么 ? 我们猜猜看 `computed` 的内部逻辑, 可能是下面这样的: 
+
+```js
+// 简化版的伪代码
+function computed(getter) {
+  let value
+  watch(() => {
+    value = getter()
+  })
+  return value
+}
+```
+
+但我们知道上面这代码是行不通的: 如果 `value` 是一个原始类型(如 `number`), 那么它跟 `computed` 内部更新逻辑之间的联系会在函数返回时丢失. 
+因为 JavaScript 的原始类型是通过值传递的, 不是引用: 
+
+![](https://www.mathwarehouse.com/programming/images/pass-by-reference-vs-pass-by-value-animation.gif)
+
+将值作为对象的属性再返回这个对象也是一样的, 没有用. 在函数返回时, 这些做法都不能保持这个值的响应式. 为了确保能始终拿到最新的值, 我们需要将值包装进一个对象中, 然后返回这个对象: 
+
+```js
+// 简化版的伪代码
+function computed(getter) {
+  const ref = {
+    value: null
+  }
+  watch(() => {
+    ref.value = getter()
+  })
+  return ref
+}
+```
+
+此外, 我们还需要拦截返回对象的 `.value` 属性的 读/写 操作来执行依赖跟踪和更新通知(为了简化, 例子中省略了这些代码). 
+现在我们通过引用来传递计算之后的值了, 不用再担心丢失响应性了. 代价就是我们需要通过 `.value` 来访问最新的值: 
+
+```js
+const double = computed(() => state.count * 2)
+
+watch(() => {
+  console.log(double.value)
+}) // -> 0
+
+state.count++ // -> 2
+```
+
+在上例中, 我们将 `double` 称为 `ref` 对象, 因为它是内部值的响应式引用. 
+
+> 想必你已经知道 Vue 中早就有 "refs" 的概念了, 但仅用于模板引用 DOM 节点或组件实例. 
+> 点击[这里](/API.html#template-refs)了解新的 refs 系统是如何同时被用于逻辑属性和模板引用的. 
+
+除了 computed ref, 我们还可以用 `ref` API 直接创建一个普通的可变 ref: 
+
+```js
+const count = ref(0)
+console.log(count.value) // 0
+
+count.value++
+console.log(count.value) // 1
+```
+
+#### Ref 展开
+
+::: v-pre
+我们可以将 ref 暴露到 render 上下文中. Vue 内部会对 ref 做特殊处理, 以便 render 上下文能直接拿到 ref 的内部值. 
+也就是说, 在模板中我们可以直接写 `{{ count }}`, 不需要写 `{{ count.value }}`了. 
+:::
+
+我们稍微改一下之前的 counter 的例子, 用 ref 代替 reactive: 
+
+```js
+import { ref, watch } from 'vue'
+
+const count = ref(0)
+
+function increment() {
+  count.value++
+}
+
+const renderContext = {
+  count,
+  increment
+}
+
+watch(() => {
+  renderTemplate(
+    `<button @click="increment">{{ count }}</button>`,
+    renderContext
+  )
+})
+```
+
+另外, 当一个 ref 作为属性嵌套在一个 reactive 对象中, 它也会自动展开: 
+
+```js
+const state = reactive({
+  count: 0,
+  double: computed(() => state.count * 2)
+})
+
+// 不需要使用 `state.double.value`
+console.log(state.double)
+```
+
+#### 在组件中使用
+
+到目前为止, 我们的 UI 代码可以根据用户的输入进行更新了 - 不过代码并不能复用. 
+如果我们想复用代码逻辑, 下一步应该将其重构成一个函数: 
+
+```js
+import { reactive, computed, watch } from 'vue'
+
+function setup() {
+  const state = reactive({
+    count: 0,
+    double: computed(() => state.count * 2)
+  })
+
+  function increment() {
+    state.count++
+  }
+
+  return {
+    state,
+    increment
+  }
+}
+
+const renderContext = setup()
+
+watch(() => {
+  renderTemplate(
+    `<button @click="increment">
+      Count is: {{ state.count }}, double is: {{ state.double }}
+    </button>`,
+    renderContext
+  )
+})
+```
+
+> 注意上例中的代码并没有依赖组件示例. 实际上, 目前为止介绍的所有 API 都可以脱离组件实例直接使用, 这样可以在更多场景下使用 Vue 的响应式系统. 
+
+现在我们将 调用 `setup()`、创建监听函数 和 渲染模板 的任务交给框架, 只用 `setup()` 和 模板 来定义一个组件: 
+
+```vue
+<template>
+  <button @click="increment">
+    Count is: {{ state.count }}, double is: {{ state.double }}
+  </button>
+</template>
+
+<script>
+import { reactive, computed } from 'vue'
+
+export default {
+  setup() {
+    const state = reactive({
+      count: 0,
+      double: computed(() => state.count * 2)
+    })
+
+    function increment() {
+      state.count++
+    }
+
+    return {
+      state,
+      increment
+    }
+  }
+}
+</script>
+```
+
+这是我们熟悉的单文件组件, 只有逻辑部分(`<script>`)和以前不太一样, 模板语法和以前一样, `<style>`省略了, 但也和以前一样. 
+
+#### 生命周期钩子
+
+到目前为止, 我们已经介绍了组件的纯状态部分: 响应式属性、计算属性和用户输入相关的属性变化. 
+但是组件可能还要处理副作用 - 例如: 打印到控制台、发送 ajax 请求 或 在 `window` 上设置一个监听事件. 
+这些副作用通常在以下时刻发生: 
+
+- 某些属性改变时
+- 组件`mounted`、`updated`或`unmounted`时(生命周期钩子)
+
+我们已经知道可以使用 `watch` API 来触发属性改变时的副作用了. 
+至于生命周期钩子中的副作用, 我们可以用 `onXXX` API (对应现有的生命周期选项) 来触发: 
+
+```js
+import { onMounted } from 'vue'
+
+export default {
+  setup() {
+    onMounted(() => {
+      console.log('component is mounted!')
+    })
+  }
+}
+```
+
+这些生命周期注册函数只能在 `setup` 内使用, 它会利用内部全局属性自动找出正在调用 `setup` 的当前组件实例. 
+这样设计是为了减少将逻辑提取到外部函数时的摩擦. 
+
+> 关于 API 的更多细节请查看[API Reference](/API), 不过我们建议你先看完下面的内容. 
+
+### 代码组织
+
+至此, 我们已经用导入的函数取代了组件 API, 为了什么呢? 用选项定义组件似乎要比将所有功能混合在一起更有组织性!
+
+咋一看确实如此. 但正如动机部分所述, 我们认为 Composition API 实际上可以更好地组织代码, 尤其是在复杂的组件中. 我们现在来解释为什么. 
+
+#### 什么是"有组织的代码"
+我们回想一下到底什么才是"有组织的代码". 编写有组织的代码的目的就是让代码更容易阅读和理解. 
+要如何才能做到"理解"代码? 仅凭组件中包含了哪些选项就能说我们"理解"它了吗? 
+你有看过其他开发者写的大型组件吗(比如[这个](https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L198-L404)), 看懂了吗?
+
+想想你要怎么跟你的同事梳理类似上面链接中的大型组件的逻辑. 你很可能会从"这个组件会处理 X, Y 和 Z"说起, 而不是"这个组件有哪些数据, 计算属性和方法". 
+在理解组件时, 我们更在意"组件试图做什么"(即代码背后的意图), 而不是"这个组件用了哪些选项". 基于选项的 API 自然可以回答后者, 但却很难解释前者.
+
+#### 逻辑关注点 vs 选项类型
+我们将组件处理的"X, Y 和 Z"定义为**逻辑关注点**. 小型单一的组件通常不存在可读性问题, 因为整个组件就处理一个关注点. 
+但在高级点的使用场景下这个问题就会变得很突出, 比如[Vue CLI UI file explorer](https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L198-L404)
+这个组件, 需要处理许多不同的逻辑关注点: 
+- 跟踪当前文件夹状态
+- 处理文件夹导航(打开, 关闭, 刷新...)
+- 处理新文件夹的创建
+- 是否只显示收藏夹
+- 是否显示隐藏文件夹
+- 处理当前工作目录的修改
+
+如果你在阅读基于选项 API 的代码, 你肯定很难立刻找出并区分这些逻辑关注点. 你会看到同一个功能被拆的到处都是, "创建新文件夹"功能用了两个数据属性，一个计算属性和一个方法, 而且方法定义在属性下面一百多行的地方. 
+如果我们用颜色标记一下同一个功能, 你就会发现它们非常分散: 
+
+<div style="text-align: center;">
+  <img src="https://user-images.githubusercontent.com/499550/62783021-7ce24400-ba89-11e9-9dd3-36f4f6b1fae2.png">
+</div>
+
+这样会导致复杂的组件变得很难理解和维护, 选项把逻辑强制拆分. 通过选项强行拆分会导致逻辑关注点变得模糊, 而且我们在处理同一个功能时, 需要在不同的选项间跳来跳去. 
+> 注意: 提供的这个例子是截至我们编写这篇文章为止的最新代码, 没有任何修改, 源代码现在可能会有些许的改动. 
+
+是时候表演真正的技术啦, 现在我们用 `Composition API` 来改写这个例子中的"新建文件夹"功能: 
+```js
+function useCreateFolder (openFolder) {
+  // 原本在 data() 里面定义的属性
+  const showNewFolder = ref(false)
+  const newFolderName = ref('')
+
+  // 原本在 computed 里面定义的计算属性
+  const newFolderValid = computed(() => isValidMultiName(newFolderName.value))
+
+  // 原本在 method 里面定义的方法
+  async function createFolder () {
+    if (!newFolderValid.value) return
+    const result = await mutate({
+      mutation: FOLDER_CREATE,
+      variables: {
+        name: newFolderName.value
+      }
+    })
+    openFolder(result.data.folderCreate.path)
+    newFolderName.value = ''
+    showNewFolder.value = false
+  }
+
+  return {
+    showNewFolder,
+    newFolderName,
+    newFolderValid,
+    createFolder
+  }
+}
+```
+
+现在新建文件夹的功能全部写在一个函数里, 从函数名称就能看出这个函数是做什么的, 这就是我们说的**组合函数**. 
+建议定义组合函数时函数名用`use`开头, 以此类推我们可以把各个逻辑关注点改成组合函数. 
+<div style="text-align=center;">
+  <img src="https://user-images.githubusercontent.com/499550/62783026-810e6180-ba89-11e9-8774-e7771c8095d6.png">
+</div>
+
+> 上图中不包含 `import`语句 和 `setup()`函数, 改造后的完整代码可以查看[这里](https://gist.github.com/yyx990803/8854f8f6a97631576c14b63c8acd8f2e)
+
+每个逻辑关注点都写到一个函数里了, 可以不用再跳来跳去了. 组合函数再编辑器里还能折叠起来方便浏览: 
+```js
+export default {
+  setup() { // ...
+  }
+}
+
+function useCurrentFolderData(networkState) { // ...
+}
+
+function useFolderNavigation({ networkState, currentFolderData }) { // ...
+}
+
+function useFavoriteFolder(currentFolderData) { // ...
+}
+
+function useHiddenFolders() { // ...
+}
+
+function useCreateFolder(openFolder) { // ...
+}
+```
+
+`setup()`函数是所有组合函数的入口点: 
+```js
+export default {
+  setup () {
+    // 网络相关
+    const { networkState } = useNetworkState()
+
+    // 文件夹相关
+    const { folders, currentFolderData } = useCurrentFolderData(networkState)
+    const folderNavigation = useFolderNavigation({ networkState, currentFolderData })
+    const { favoriteFolders, toggleFavorite } = useFavoriteFolders(currentFolderData)
+    const { showHiddenFolders } = useHiddenFolders()
+    const createFolder = useCreateFolder(folderNavigation.openFolder)
+
+    // 当前工作目录相关
+    resetCwdOnLeave()
+    const { updateOnCwdChanged } = useCwdUtils()
+
+    // 工具函数
+    const { slicePath } = usePathUtils()
+
+    return {
+      networkState,
+      folders,
+      currentFolderData,
+      folderNavigation,
+      favoriteFolders,
+      toggleFavorite,
+      showHiddenFolders,
+      createFolder,
+      updateOnCwdChanged,
+      slicePath
+    }
+  }
+}
+```
+
+没错, 用选项 API 的话不用写那么多, 但是`setup()`函数读起来就像这个组件试图做什么——选项 API 读起来就没有这种感觉. 
+通过参数传递, 你会很清楚组合函数之间的关系. 还有, `return`语句是唯一可以检查函数暴露了什么参数给模板的地方.
+
+同一个功能, 可以用 `选项 API` 也可以用 `组合函数 API`, 选项 API 更具强制性, 而组合API 更关注逻辑. 
+
+### 逻辑提取和复用
+在组件间提取和复用逻辑的话, 组合 API 非常灵活好用. 不需要再依赖神奇的`this`上下文, 它只依赖传入的参数和全局的 Vue API. 
+你可以把任何你想复用的组件逻辑导出为一个函数. 你甚至可以导出整个`setup()`来实现`extend`的功能. 
+
+举个例子: 实现跟踪鼠标的位置
+```js
+import { ref, onMounted, onUnmounted } from 'vue'
+
+export function useMousePosition() {
+  const x = ref(0)
+  const y = ref(0)
+
+  function update(e) {
+    x.value = e.pageX
+    y.value = e.pageY
+  }
+
+  onMounted(() => {
+    window.addEventListener('mousemove', update)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('mousemove', update)
+  })
+
+  return { x, y }
+}
+```
+组件可以导入这个函数: 
+```js
+import { useMousePosition } from './mouse'
+
+export default {
+  setup() {
+    const { x, y } = useMousePosition()
+    // 其它逻辑 .. 
+    return { x, y }
+  }
+}
+```
+
+在文件夹的例子中, 我们提取了一些通用的代码(比如: `usePathUtils` 和 `useCwdUtils`)到外部文件中, 因为在其它文件也能用到. 
+其实用 `mixins`, `高阶组件`或`无渲染组件(通过插槽)`也能实现逻辑复用, 网上有很多教程这里不再赘述了. 但与组合函数相比, 这些方法都有各自的缺点: 
+- 渲染上下文中的属性来源不明确. 例如: 使用了多个`mixins`的组件在渲染模板时, 很难分清某个属性是从哪个`mixins`注入的
+- 命名空间冲突. `mixins`可能会有属性名或方法名的冲突, 高阶组件可能会有 props 名的冲突
+- 性能. 高阶组件和无渲染组件需要创建一个有状态的组件, 这会造成性能损失
+相比之下, 使用组合 API :
+- 暴露给模板的属性来源清晰, 因为都是来自组合函数的
+- 不存在命名空间的冲突, 组合函数的返回值可以随便重命名
+- 复用逻辑不用创建不必要的组件
+
+### 与现有 API 一起使用
+组合 API 可以与现有的 API 一起使用. 
+- 组合 API 会比 2.x 的选项(`data`, `computed` 和 `methods`)先解析完, 所以在组合 API 内访问不到选项定义的属性和方法. 
+- `setup()` retrun 的属性会暴露在 `this` 上, 选项 API 可以访问. 
+
+### 插件开发
+许多插件会将属性注入到`this`上. 例如: Vue Router 会注入`this.$route`和`this.$router`, Vuex 会注入`this.$route`. 
+这就让类型推断变得很棘手, 因为每一个插件都要为注入的属性添加类型到 Vue. 
+
+当你使用组合 API 时, 没有`this`了, 插件可以通过内部调用 [`provide` & `inject`](API.html#provide-inject) 提供组合函数, 举个例子: 
+
+```js
+const StoreSymbol = Symbol()
+
+export function provideStore(store) {
+  provide(StoreSymbol, store)
+}
+
+export function useStore() {
+  const store = inject(StoreSymbol)
+  if (!store) {
+    // 这里可以报错, 没有获取到 store
+  }
+  return store
+}
+```
+
+在业务代码中: 
+
+```js
+// 在根组件中提供 store
+//
+const App = {
+  setup() {
+    provideStore(store)
+  }
+}
+
+const Child = {
+  setup() {
+    const store = useStore()
+    // 在这里使用 store
+  }
+}
+```
+
+注意, `store` 也可以通过 app 级别的 全局 API 提供, 但在业务代码中 `useStore` 内的代码不需要改变. 
+
+## 缺点
+
+### 引入 Refs 的开销
+
+### Ref vs. Reactive
+
+### 冗长的返回语句
+
+### 灵活性带来的制约需求
+
+## 采用策略
+
+## 附录
+
+### Class API 的类型问题
+
+### 对比 React Hooks
+
+### 对比 Svelte
+
+
+

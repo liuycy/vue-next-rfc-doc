@@ -1,5 +1,7 @@
 module.exports = {
   title: "Vue Composition API",
+  base: '/vue-next-rfc-doc/',
+  dest: 'docs',
   themeConfig: {
     sidebar: {
       "/RFCs/": [
@@ -17,7 +19,7 @@ module.exports = {
     },
     nav: [
       { text: "Composition API RFC", link: "/" },
-      { text: "Composition API", link: "/API" },
+      { text: "API Reference", link: "/API" },
       { text: "RFCs", link: "/RFCs/0001-new-slot-syntax" }
     ]
   }
