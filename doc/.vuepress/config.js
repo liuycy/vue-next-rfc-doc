@@ -1,6 +1,6 @@
 module.exports = {
   title: "Vue Composition API",
-  base: '/vue-next-rfc-doc/docs/',
+  base: './',
   dest: 'docs',
   themeConfig: {
     sidebar: {
