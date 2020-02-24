@@ -1,6 +1,7 @@
 # Vue Next RFCs 中文翻译
 
-> 由于英文水平有限, 每次看[原文](https://vue-composition-api-rfc.netlify.com/)都比较费劲, 所以参考[尤雨溪在知乎上的翻译](https://zhuanlan.zhihu.com/p/68477600)简单翻译成中文, 方便下次阅读 
+> 由于英文水平有限, 每次看[原文](https://vue-composition-api-rfc.netlify.com/)都比较费劲, 所以参考[尤雨溪在知乎上的翻译](https://zhuanlan.zhihu.com/p/68477600)简单翻译成中文, 方便下次阅读. 
+> 内容上基本与原文一致, 部分内容照搬知乎上的翻译, 如果你在阅读时觉得哪里读起来不太顺畅, 欢迎在 [issues](https://github.com/liuycy/vue-next-rfc-doc/issues) 中讨论. 
 
 > 新增翻译内容 [active rfcs](https://github.com/vuejs/rfcs) 
 

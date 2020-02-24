@@ -9,7 +9,8 @@ sidebar: auto
 - 参考 Issues: [#42](https://github.com/vuejs/rfcs/pull/42)
 - 实现 PR: (留空)
 
-> 由于英文水平有限, 每次看[原文](https://vue-composition-api-rfc.netlify.com/)都比较费劲, 所以参考[尤雨溪在知乎上的翻译](https://zhuanlan.zhihu.com/p/68477600)简单翻译成中文, 方便下次阅读
+> 由于英文水平有限, 每次看[原文](https://vue-composition-api-rfc.netlify.com/)都比较费劲, 所以参考[尤雨溪在知乎上的翻译](https://zhuanlan.zhihu.com/p/68477600)简单翻译成中文, 方便下次阅读. 
+> 内容上基本与原文一致, 部分内容照搬知乎上的翻译, 如果你在阅读时觉得哪里读起来不太顺畅, 欢迎在 [issues](https://github.com/liuycy/vue-next-rfc-doc/issues) 中讨论. 
 
 
 ## 概要
@@ -621,21 +622,283 @@ const Child = {
 
 ### 引入 Refs 的开销
 
+严格来说, Ref 是该提案引入的唯一一个新概念. 它的引入是为了不依赖 `this` 传递响应式参数. 缺点就是: 
+
+1. 使用 Composition API 时, 需要区分 ref 和 普通对象, 这会增加精神负担.   
+   使用约定的命名(像 `xxxRef`) 或者类型系统可以减少区分的精神负担. 
+   另一方面, 随着组织代码的灵活性的提高, 组件逻辑可以拆分成小块函数中, 这些函数的上下文很简单而且 refs 的开销很容易控制. 
+
+2. 需要通过 `.value` 来访问和修改 refs, 比起普通值使用起来更麻烦.   
+   有人提议使用编译时语法糖(类似 Svelte 3)来解决这个问题. 按理说确实可以, 但我们认为 Vue 默认支持这种语法糖没有意义(详见[对比 Svelte](#对比-svelte)). 
+   不过理论上用户可以自己造一个 Babel 插件来支持这个. 
+
+我们也讨论过是否可以完全避免 Ref 概念来使用 响应式对象. 但是: 
+
+- 计算属性的回调函数可以返回原始类型, 所以类似 Ref 的容器时不能避免的
+- 为了响应式功能, Composition 函数在传入或导出原始类型时也需要将值包装进一个对象中. 如果框架没有提出一个标准实现, 用户最终也会发明出自己的 Ref 实现. 
+
 ### Ref vs. Reactive
+
+用户可能会在 使用 Ref 还是 Reactive 这个问题上感到困惑. 首先你需要了解这两个 API 才能有效地利用 Composition API. 
+单单只用任意一个都可能让你写出晦涩难懂的代码或重复地造轮子. 
+
+`ref` 和 `reactive` 的使用区别, 可以用 JavaScript 来类比: 
+
+```js
+// 第一种: 拆分变量
+let x = 0
+let y = 0
+
+function updatePosition(e) {
+  x = e.pageX
+  y = e.pageY
+}
+
+// --- 对比 ---
+
+// 第二种: 整个对象
+const pos = {
+  x: 0,
+  y: 0
+}
+
+function updatePosition(e) {
+  pos.x = e.pageX
+  pos.y = e.pageY
+}
+```
+
+- 如果使用 `ref`, 就会像上例中第一种那样比较冗长
+- 如果使用 `reactive`, 就会像上例中第二种那样
+
+如果只用 `reactive`, 为了保持响应式, 代码中的 Composition 函数就必须始终返回响应式对象的引用. 
+而且这个对象不能解构或展开: 
+
+```js
+// Composition 函数
+function useMousePosition() {
+  const pos = reactive({
+    x: 0,
+    y: 0
+  })
+
+  // ...
+  return pos
+}
+
+// 组件代码
+export default {
+  setup() {
+    // 这样会丢失响应式
+    const { x, y } = useMousePosition()
+    return {
+      x,
+      y
+    }
+
+    // 这样会丢失响应式
+    return {
+      ...useMousePosition()
+    }
+
+    // 只有这样才能保持响应式
+    // 你必须原样返回 `pos`, 在模板中使用 `pos.x` 和 `pos.y` 来引用 `x` 和 `y`
+    return {
+      pos: useMousePosition()
+    }
+  }
+}
+```
+
+使用 `toRefs` API 可以解除这种限制 - 它会将 响应式对象中的每一个属性转换成对应的 ref: 
+
+```js
+function useMousePosition() {
+  const pos = reactive({
+    x: 0,
+    y: 0
+  })
+
+  // ...
+  return toRefs(pos)
+}
+
+// x 和 y 现在是 ref 了
+const { x, y } = useMousePosition()
+```
+
+总而言之, 有两种定义变量的风格: 
+
+1. 你可以像定义普通 JavaScript 变量那样使用 `ref` 和 `reactive`, 使用这种风格的话建议开启 IDE 的类型提示
+2. 你可以尽可能的使用 `reactive`, 但在从 Composition 函数中返回对象时使用`toRefs`转换一下. 这能减少区分变量的精神负担, 但并不意味着你不需要熟悉 ref 的概念. 
+
+我们认为此阶段给出使用 `ref` 和 `reactive` 的最佳实践还为时尚早. 我们建议你从上面两种风格中选一个合你心意的. 
+我们会收集用户的反馈, 并最终提供相关的明确指导. 
 
 ### 冗长的返回语句
 
+有人会担心 `setup()`中的 return 语句太过冗长会像样板文件一样. 
+
+我们认为明确的返回语句有利于可维护性. 这能让我们显式的控制暴露给模板的内容, 并提供一个模板定义属性的入口位置. 
+
+也有一些建议说可以自动暴露 `setup()` 中定义的属性, 这样就可以省略 return 语句了. 同样, 我们认为 Vue 不该默认支持这种功能, 而且这也违背了标准 JavaScript 的直觉. 
+不过有一些方法可以使用户不那么繁琐: 
+
+- 基于 `setup()` 中定义的变量自动生成返回语句的 IDE 插件
+- 隐式生成返回语句的 Babel 插件
+
 ### 灵活性带来的制约需求
 
+很多用户认为 Composition API 提供了更大的灵活性, 也要指定一些制约引导用户写"正确的代码". 有人担心 Composition API 会让初学者写出面条代码. 
+换言之, Composition API 提高了代码质量的上限, 同时也拉低了下限. 
+
+我们在一定程度上同意部分观点, 但我们相信: 
+
+1. 上限的收益远大于下限的损失
+2. 通过社区和文档的引导, 我们可以有效地解决代码组织的问题
+
+有人拿 Angular 1 的控制器举例, 认为糟糕的设计会导致糟糕的代码. 但 Composition API 和 Angular 1 控制器最大的区别就是
+Composition API 并不依赖于共享作用域的上下文. 这样可以将逻辑更容易拆分成独立的函数, 这也是 JavaScript 组织代码的核心机制. 
+
+任何 JavaScript 代码都是从入口函数开始的(可以认为是程序的`setup()`). 我们根据逻辑关注点将代码分为函数和模块. 
+**Composition API 同样也可以拆分组件**. 换言之, 你 JavaScript 写得6, Composition API 你就能写得6. 
+
 ## 采用策略
+
+Composition API 是纯增量代码, 不会影响/弃用任何 2.x 现有的 API. 
+现在可以通过[`@vue/composition 库`](https://github.com/vuejs/composition-api/)在 2.x 上体验 Composition API 了. 
+这个库主要是为了提供实验性 API 并收集用户反馈, 当前实现是此提案的最新版本, 但由于插件技术的限制, 可能会有些不一致的地方. 
+随着该提案的更新, 这个库可能会有破坏性的更新, 因此我们不建议在生产代码中使用它. 
+
+我们打算在 3.0 中内置 Composition API, 并且可以和 2.x 的选项同时使用. 
+
+对于那些只想使用 Composition API 的用户, 我们可以提供可选的编译时选项来删掉 2.x 的选项代码, 这样可以减少打包后代码的体积. 
+
+Composition API 的定位是高级特性, 因为旨在解决大型应用出现的各种问题. 我们不会重写文档强推 Composition API 作为首选, 而是在现有文档中新增独立章节来介绍它. 
 
 ## 附录
 
 ### Class API 的类型问题
 
+Class API 提案的主要目的是寻找一个能够提供更好的 TypeScript 支持的组件声明方式. 但是由于 Vue 需要将来自多个选项的属性混合到同一个渲染上下文上, 这使得即使用了 Class, 要得到良好的类型推导也不是很容易. 
+
+以 props 的类型推导为例. 要将 props 的类型 merge 到 class 的 this 上, 我们有两个选择: 用 class 的泛型参数, 或是用 decorator. 
+
+这是用泛型参数的例子: 
+
+```ts
+interface Props {
+  message: string
+}
+
+class App extends Component<Props> {
+  static props = {
+    message: String
+  }
+}
+```
+
+由于泛型参数是纯类型层面的, 所以我们还需要额外地进行一次运行时的 props 选项声明来获得正确的行为. 这就导致需要进行双重声明. 
+
+使用 decorator 的例子如下: 
+
+```ts
+class App extends Component<Props> {
+  @prop message: string
+}
+```
+
+Decorators 存在如下问题: 
+
+- ES 的 decorator 提案仍然在 stage-2 且极其不稳定. 过去一年内已经经历了两次彻底大改, 且和 TS 现有的实现已经完全脱节. 现在引入一个基于 TS decorator 实现的 API 风险太大. 
+- Decorator 只能声明 class `this` 上的属性, 却无法将某一类 decorator 声明的属性归并到一个对象上(比如 `$props`), 这就导致 `this.$props` 无法被推导, 且影响 TSX 的使用. 
+- 用户很可能会觉得可以用 `@prop message: string = 'foo'` 这样的写法去声明默认值, 但事实上技术层面无法做到符合语义的实现. 
+
+最后, class 还有一个问题, 那就是目前 class method 不支持参数的 contextual typing, 也就是说我们无法基于 class 本身的 fields 来推导某个 method 的参数类型, 需要用户自己去声明
+
 ### 对比 React Hooks
+
+这里提出的 API 和 React Hooks 有一定的相似性, 具有同等的基于函数抽取和复用逻辑的能力, 但也有很本质的区别. 
+React Hooks 在每次组件渲染时都会调用, 通过隐式地将状态挂载在当前的内部组件节点上, 在下一次渲染时根据调用顺序取出. 
+而 Vue 的 setup() 每个组件实例只会在初始化时调用一次 , 状态通过引用储存在 setup() 的闭包内. 这意味着基于 Vue 的函数 API 的代码: 
+
+- 整体上更符合 JavaScript 的直觉; 
+- 不受调用顺序的限制, 可以有条件地被调用; 
+- 不会在后续更新时不断产生大量的内联函数而影响引擎优化或是导致 GC 压力; 
+- 不需要总是使用 `useCallback` 来缓存传给子组件的回调以防止过度更新; 
+- 不需要担心传了错误的依赖数组给 `useEffect/useMemo/useCallback` 从而导致回调中使用了过期的值 —— Vue 的依赖追踪是全自动的. 
+
+> 注: React Hooks 的开创性毋庸置疑, 也是本提案的灵感来源. 
+> Hooks 代码和 JSX 并置使得对值的使用更简洁也是其优点, 但其设计确实存在上述问题, 而 Vue 的响应式系统恰巧能够让我们绕过这些问题. 
 
 ### 对比 Svelte
 
+Composition API 和 Svelte 3 的依赖编译器的方法在概念上有着异曲同工之妙. 搞个简单的对比例子感受一下: 
 
+#### Vue
 
+```vue
+<script>
+import { ref, watch, onMounted } from 'vue'
+
+export default {
+  setup() {
+    const count = ref(0)
+
+    function increment() {
+      count.value++
+    }
+
+    watch(() => console.log(count.value))
+
+    onMounted(() => console.log('mounted!'))
+
+    return {
+      count,
+      increment
+    }
+  }
+}
+</script>
+```
+
+#### Svelte 
+
+```html
+<script>
+import { onMount } from 'svelte'
+
+let count = 0
+
+function increment() {
+  count++
+}
+
+$: console.log(count)
+
+onMount(() => console.log('mounted!'))
+</script>
+```
+
+Svelte 的代码看起来更简洁, 是因为他在编译时执行了以下操作: 
+
+- 将整个 `<script>` 的内容(除了 import 语句)隐式地包装进一个函数, 每个组件实例都会调用这个函数(不止执行一次)
+- 隐式地注册变量改变时的响应式处理
+- 隐式地将作用域内的变量暴露到 render 上下文
+- 将 `$` 语句编译为可重复执行的代码
+
+理论上, Vue 也可以做同样的处理(或者通过 Babel 插件), 我们不做是因为要和标准的 JavaScript 保持一致. 
+如果你从 Vue 文件的 `<script>` 块中提取代码, 我们希望它能和标准的 ES 模块表现一致. 
+Svelte 的 `<script>` 块理论上来说已经不是标准的 JavaScript 代码了, 这种依赖编译器的方法会有一些问题: 
+
+1. 代码在 编译过/没编译过 的情况下表现得不一样. 作为一个渐进式的框架, 用户也许 希望/需要/必须 不用构建就能使用 Vue, 所以编译不是默认选项. 
+   而 Svelte 的定位就是一个编译器, 所有只能通过编译后代码才能运行. 两者有各自的取舍. 
+
+2. 代码在组件 内部/外部 表现得不一样. 当试图将 Svelte 组件内的代码抽离到标准的 JavaScript 文件中, 我们将失去神奇的简洁语法, 用回[冗长的底层 API](https://svelte.dev/docs#svelte_store)
+
+3. Svelte 的响应式编译只适用于顶层变量. 它不作用与函数内定义的变量, 所以我们[不能将响应式属性封装进组件内的函数中](https://svelte.dev/repl/4b000d682c0548e79697ddffaeb757a3?version=3.6.2). 
+   这会给使用函数来组织代码带来不小的限制 - 我们在这个 RFC 中证明过, 大型组件的可维护性是很重要的. 
+
+4. [非标准语义在与 TypeScript 集成时会有问题](https://github.com/sveltejs/svelte/issues/1639)
+
+这并不是说 Svelte 3 不好, 实际上这是一个十分创新的方法, 我们很尊重作者的工作. 只不过基于 Vue 设计上的制约和目标, 我们必须做出不一样的取舍. 
