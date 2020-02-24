@@ -4,7 +4,7 @@
 
 > 新增翻译内容 [active rfcs](https://github.com/vuejs/rfcs) 
 
-这次翻译文档使用 [VuePress](https://vuepress.vuejs.org/) 构建静态网站, 并部署在 GitHub Pages 上. 可点击[在线地址](https://liuycy.github.io/vue-next-rfc-doc/docs)查看. 
+这次翻译文档使用 [VuePress](https://vuepress.vuejs.org/) 构建静态网站, 并部署在 GitHub Pages 上. 可点击[在线地址](https://liuycy.github.io/vue-next-rfc-doc/)查看. 
 
 ## 目录层级
 
