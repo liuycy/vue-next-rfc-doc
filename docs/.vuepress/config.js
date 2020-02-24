@@ -1,7 +1,6 @@
 module.exports = {
   title: "Vue Composition API",
-  base: './',
-  dest: 'docs',
+  dest: "dist",
   themeConfig: {
     sidebar: {
       "/RFCs/": [
