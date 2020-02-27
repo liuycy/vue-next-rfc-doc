@@ -92,3 +92,45 @@ export function render() {
 ## 缺点
 
 用户不能再使用 Vue 上的全局 API 了, 需要手动导入 API. 但为了将生产包压到最小, 这些都是值得的. 
+
+## 在插件中使用全局 API
+
+有些插件用到了原本挂在 `Vue` 上的全局 API: 
+
+```js
+const plugin = {
+  install: Vue => {
+    Vue.nextTick(() => {
+      // ...
+    })
+  }
+}
+```
+
+在 3.0 中, 需要改成导入具体 API 的方式: 
+
+```js
+import { nextTick } from 'vue'
+
+const plugin = {
+  install: app => {
+    nextTick(() => {
+      // ...
+    })
+  }
+}
+```
+
+这会造成一些开销, 因为库作者需要构建时正确处理 Vue 的外部化: 
+
+- Vue 不应该打包进库中
+- 对于 ES 模块 版本, 应该放开导入并交由用户来处理最终打包
+- 对于 UMD / 浏览器 版本, 应该先尝试全局的 `Vue.h` 并回退到调用 `require`
+
+这是React库的常见做法, 可以在 webpack 和 Rollup 中使用. 大多数 Vue 库也是这样. 我们只需要提供正确的文档和工具支持. 
+
+## 备选方案
+没有
+
+## 升级策略
+应该可以提供一份代码 mod 作为迁移工具的一部分

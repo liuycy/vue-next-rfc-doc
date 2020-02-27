@@ -325,7 +325,7 @@
 - [#9180](https://github.com/vuejs/vue/issues/9180)提出的 (`v-scope`) 指令
 - @rellect 在[这里](https://github.com/vuejs/vue/issues/9306#issuecomment-453946190)提议的缩写符号 (`&`)
 
-## 采纳策略
+## 升级策略
 
 这个修改是完全向后兼容的, 所以我们可以在一个小版本中推出(计划在2.6中发布). 
 
