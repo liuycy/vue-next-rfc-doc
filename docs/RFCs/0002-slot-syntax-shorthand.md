@@ -1,5 +1,6 @@
-> 原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0002-slot-syntax-shorthand.md
 # 插槽语法缩写
+
+> 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0002-slot-syntax-shorthand.md>
 
 - 开始日期: 2019-01-16
 - 目标版本: (2.x / 3.x)

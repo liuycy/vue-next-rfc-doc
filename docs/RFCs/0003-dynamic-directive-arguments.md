@@ -1,5 +1,6 @@
-> 原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0003-dynamic-directive-arguments.md
 # 动态指令参数
+
+> 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0003-dynamic-directive-arguments.md>
 
 - 开始日期: 2019-01-16
 - 目标版本: (2.x / 3.x)

@@ -1,5 +1,6 @@
-> 原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0005-replace-v-bind-sync-with-v-model-argument.md
 # 用 v-model 取代 v-bind.sync
+
+> 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0005-replace-v-bind-sync-with-v-model-argument.md>
 
 - 开始日期: 2019-01-28
 - 目标版本: 3.x

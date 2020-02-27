@@ -1,5 +1,6 @@
-> 原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0007-functional-async-api-change.md
 # 函数式异步 API 更改
+
+> 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0007-functional-async-api-change.md>
 
 - 开始日期: 2019-04-08
 - 目标版本: 3.x

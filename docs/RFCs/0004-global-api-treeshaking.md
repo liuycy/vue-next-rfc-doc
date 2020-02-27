@@ -1,5 +1,6 @@
-> 原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0004-global-api-treeshaking.md
 # 全局 API treeshaking
+
+> 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0004-global-api-treeshaking.md>
 
 - 开始日期: 2019-03-01
 - 目标版本: 3.x
