@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Vue Composition API</title>
+    <meta name="description" content="">
+    <meta name="generator" content="VuePress 1.3.1">
+    
+    
+    <link rel="preload" href="/vue-next-rfc-doc/assets/css/0.styles.19b2238c.css" as="style"><link rel="preload" href="/vue-next-rfc-doc/assets/js/app.b49d260f.js" as="script"><link rel="preload" href="/vue-next-rfc-doc/assets/js/2.3b75c94c.js" as="script"><link rel="preload" href="/vue-next-rfc-doc/assets/js/21.d587b9e7.js" as="script"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/10.b852e166.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/11.bb2df4ed.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/12.58040572.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/13.a6b95729.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/14.37e57903.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/15.75e7360f.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/16.467349da.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/17.1786b741.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/18.2ae0558c.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/19.600cc431.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/20.38967004.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/22.91d89141.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/23.106421da.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/24.a3a0b4d7.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/25.50d8271e.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/3.caadaa1f.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/4.f03b7f8e.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/5.e9ef4f37.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/6.796b5a68.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/7.111f1edc.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/8.cf817b12.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/9.f5f1a95d.js">
+    <link rel="stylesheet" href="/vue-next-rfc-doc/assets/css/0.styles.19b2238c.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/vue-next-rfc-doc/" class="home-link router-link-active"><!----> <span class="site-name">Vue Composition API</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/vue-next-rfc-doc/" class="nav-link">
+  Composition API RFC
+</a></div><div class="nav-item"><a href="/vue-next-rfc-doc/API.html" class="nav-link">
+  API Reference
+</a></div><div class="nav-item"><a href="/vue-next-rfc-doc/RFCs/0001-new-slot-syntax.html" class="nav-link">
+  RFCs
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/vue-next-rfc-doc/" class="nav-link">
+  Composition API RFC
+</a></div><div class="nav-item"><a href="/vue-next-rfc-doc/API.html" class="nav-link">
+  API Reference
+</a></div><div class="nav-item"><a href="/vue-next-rfc-doc/RFCs/0001-new-slot-syntax.html" class="nav-link">
+  RFCs
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>RFCs</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/vue-next-rfc-doc/RFCs/0001-new-slot-syntax.html" class="sidebar-link">/RFCs/0001-new-slot-syntax.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0002-slot-syntax-shorthand.html" class="sidebar-link">/RFCs/0002-slot-syntax-shorthand.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0003-dynamic-directive-arguments.html" class="sidebar-link">/RFCs/0003-dynamic-directive-arguments.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0004-global-api-treeshaking.html" class="sidebar-link">/RFCs/0004-global-api-treeshaking.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0005-replace-v-bind-sync-with-v-model-argument.html" class="sidebar-link">/RFCs/0005-replace-v-bind-sync-with-v-model-argument.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0006-slots-unification.html" class="sidebar-link">/RFCs/0006-slots-unification.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0007-functional-async-api-change.html" class="sidebar-link">/RFCs/0007-functional-async-api-change.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0008-render-function-api-change.html" class="sidebar-link">/RFCs/0008-render-function-api-change.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0009-global-api-change.html" class="sidebar-link">/RFCs/0009-global-api-change.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0010-optional-props-declaration.html" class="sidebar-link">/RFCs/0010-optional-props-declaration.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0011-v-model-api-change.html" class="sidebar-link">/RFCs/0011-v-model-api-change.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0012-custom-directive-api-change.html" class="sidebar-link">/RFCs/0012-custom-directive-api-change.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0014-drop-keycode-support.html" class="sidebar-link">/RFCs/0014-drop-keycode-support.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0016-remove-inline-templates.html" class="sidebar-link">/RFCs/0016-remove-inline-templates.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0017-transition-as-root.html" class="active sidebar-link">/RFCs/0017-transition-as-root.html</a></li><li><a href="/vue-next-rfc-doc/RFCs/0019-remove-data-object-declaration.html" class="sidebar-link">/RFCs/0019-remove-data-object-declaration.html</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><blockquote><p>原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0017-transition-as-root.md</p></blockquote> <h1 id="作为根节点时"><a href="#作为根节点时" class="header-anchor">#</a> <!----></h1></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/vue-next-rfc-doc/RFCs/0016-remove-inline-templates.html" class="prev">
+        /RFCs/0016-remove-inline-templates.html
+      </a></span> <span class="next"><a href="/vue-next-rfc-doc/RFCs/0019-remove-data-object-declaration.html">
+        /RFCs/0019-remove-data-object-declaration.html
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/vue-next-rfc-doc/assets/js/app.b49d260f.js" defer></script><script src="/vue-next-rfc-doc/assets/js/2.3b75c94c.js" defer></script><script src="/vue-next-rfc-doc/assets/js/21.d587b9e7.js" defer></script>
+  </body>
+</html>
