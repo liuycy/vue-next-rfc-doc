@@ -1,3 +1,4 @@
+> 原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0001-new-slot-syntax.md
 # 新的插槽语法
 
 - 开始日期: 2019-01-14

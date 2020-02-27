@@ -15,8 +15,22 @@
 ├── index.md    # Composition API RFC (首页)
 ├── API.md      # Composition API Reference
 └── RFCs        # active RFCs
-    ├── 0001-new-slot-syntax.md
-    ├── 0002-slot-syntax-shorthand.md
-    ├── 0003-dynamic-directive-arguments.md
-    └── 0004-global-api-treeshaking.md
+    ├── 0001-new-slot-syntax.md                             
+    ├── 0002-slot-syntax-shorthand.md                       
+    ├── 0003-dynamic-directive-arguments.md                 
+    ├── 0004-global-api-treeshaking.md                      
+    ├── 0005-replace-v-bind-sync-with-v-model-argument.md
+    ├── 0006-slots-unification.md                        
+    ├── 0007-functional-async-api-change.md              
+    ├── 0008-render-function-api-change.md               
+    ├── 0009-global-api-change.md                        
+    ├── 0010-optional-props-declaration.md               
+    ├── 0011-v-model-api-change.md                       
+    ├── 0012-custom-directive-api-change.md              
+    ├── 0014-drop-keycode-support.md                     
+    ├── 0015-remove-filters.md                           
+    ├── 0016-remove-inline-templates.md                  
+    ├── 0017-transition-as-root.md                       
+    ├── 0018-transition-class-change.md                  
+    └── 0019-remove-data-object-declaration.md           
 ```

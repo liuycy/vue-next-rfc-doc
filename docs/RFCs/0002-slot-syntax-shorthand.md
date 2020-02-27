@@ -1,3 +1,4 @@
+> 原文: https://github.com/vuejs/rfcs/blob/master/active-rfcs/0002-slot-syntax-shorthand.md
 # 插槽语法缩写
 
 - 开始日期: 2019-01-16
