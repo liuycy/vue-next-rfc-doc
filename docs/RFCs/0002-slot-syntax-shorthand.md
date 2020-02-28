@@ -13,7 +13,7 @@
 
 ## 基本用例
 
-```vue
+``` vue
 <foo>
   <template #header="{ msg }">
     Message from header: {{ msg }}
@@ -31,7 +31,7 @@
 
 在 Vue 中, 我们目前只为 `v-bind` 和 `v-on` 提供过缩写: 
 
-```vue
+``` vue
 <div v-bind:id="id"></div>
 <div :id="id"></div>
 
@@ -44,7 +44,7 @@
 
 新语法 `v-slot` 在多个插槽的情况下也会有类似的问题: 
 
-```vue
+``` vue
 <TestComponent>
   <template v-slot:one="{ name }">Hello {{ name }}</template>
   <template v-slot:two="{ name }">Hello {{ name }}</template>
@@ -54,7 +54,7 @@
 
 上面的代码中`v-slot`重复了多次, 只有参数不一样而已. 这时缩写就可以让组件更容易扫读了. 
 
-```vue
+``` vue
 <TestComponent>
   <template #one="{ name }">Hello {{ name }}</template>
   <template #two="{ name }">Hello {{ name }}</template>
@@ -66,7 +66,7 @@
 
 缩写遵循类似 `v-bind` 和 `v-on` 的缩写规则: 用符号(`#`)替代掉指令和冒号. 
 
-```vue
+``` vue
 <!-- 完整语法 -->
 <foo>
   <template v-slot:header="{ msg }">
@@ -93,7 +93,7 @@
 与 `v-bind` 和 `v-on` 一样, 缩写只在带参数的情况下有效. 也就是说在没有参数时不能简写成`#=`. 
 对于默认插槽, 应该使用完整语法`v-slot`或显示名称`#default`.
 
-```vue
+``` vue
 <foo v-slot="{ msg }">
   {{ msg }}
 </foo>
@@ -107,7 +107,7 @@
 
 举个用到了作用域插槽的真实案例([vue-promised](https://github.com/posva/vue-promised)): 
 
-```vue
+``` vue
 <Promised :promise="usersPromise">
  <template #pending>
    <p>Loading...</p>
@@ -135,7 +135,7 @@
 
 在之前的 RFC 中已经介绍和讨论了一些备选符号, 另一个差点入选的符号是`&`: 
 
-```vue
+``` vue
 <foo>
   <template &header="{ msg }">
     Message from header: {{ msg }}

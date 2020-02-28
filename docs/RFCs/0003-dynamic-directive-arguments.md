@@ -13,7 +13,7 @@
 
 ## 基本用例
 
-```vue
+``` vue
 <div v-bind:[key]="value"></div>
 <div v-on:[event]="handler"></div>
 ```
@@ -22,7 +22,7 @@
 
 由于指令参数是静态的, 因此当前用户必须通过无参数对象绑定才能利用动态键: 
 
-```vue
+``` vue
 <div v-bind="{ [key]: value }"></div>
 <div v-on="{ [event]: handler }"></div>
 ```
@@ -32,7 +32,7 @@
 - 这是一个鲜为人知的技术, 你需要知道 `v-bind`/`v-on` 的对象绑定的用法 和 JavaScript 可以计算 key 的知识点.
 - 上面这样生成的代码效率较低: 这回产生一个临时的对象, 而且如果同一个元素上绑定了其他静态属性就必须遍历这个对象然后合并到现有的数据对象中. 代码大致如下所示: 
 
-  ```js
+  ``` js
   return h('div', {
     on: Object.assign({
       click: onClick
@@ -44,7 +44,7 @@
 
   和动态参数一起, 我们可以直接生成: 
 
-  ```js
+  ``` js
   return h('div', {
     on: {
       click: onClick,
@@ -58,7 +58,7 @@
 
 ## 设计细节
 
-```vue
+``` vue
 <!-- v-bind 动态特性名 -->
 <div v-bind:[key]="value"></div>
 
@@ -99,13 +99,13 @@
 
 理论上来说动态指令参数支持任何复杂的 JavaScript 表达式, 但是 html 的属性名不支持空格和引号, 所以在一些情况下可能会遇到: 
 
-```vue
+``` vue
 <div :[key + 'foo']="value"></div>
 ```
 
 上面这样写并不会如你所料, 你需要这样写: 
 
-```vue
+``` vue
 <div :[`${key}foo`]="value"></div>
 ```
 

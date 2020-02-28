@@ -1,4 +1,4 @@
-# 函数式异步 API 更改
+# 函数式组件和异步组件 API 更改
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0007-functional-async-api-change.md>
 

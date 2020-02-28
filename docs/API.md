@@ -16,7 +16,7 @@ sidebar: auto
 
   `setup` 返回的对象中的属性会被绑定到模板的上下文中: 
 
-  ```vue
+  ``` vue
   <template>
     <div>{{ count }} {{ object.foo }}</div>
   </template>
@@ -45,7 +45,7 @@ sidebar: auto
 
   `setup` 也可以返回一个 render 函数, 直接使用同一作用域中的响应式变量:  
 
-  ```js
+  ``` js
   import { h, ref, reactive } from 'vue'
 
   export default {
@@ -65,7 +65,7 @@ sidebar: auto
 
   函数的第一个参数是解析好的 props
 
-  ```js
+  ``` js
   export default {
     props: {
       name: String
@@ -78,7 +78,7 @@ sidebar: auto
 
   注意: 这个 `props` 对象是响应式的, 即当新的 `props` 传入时, 它会更新并触发 `watch` 的监听回调: 
 
-  ```js
+  ``` js
   export default {
     props: {
       name: String
@@ -95,7 +95,7 @@ sidebar: auto
 
   第二个参数是 context 上下文对象, 它可以拿到 2.x 版本中挂载在 `this` 上的一些可选属性: 
 
-  ```js
+  ``` js
   const MyComponent = {
     setup(props, context) {
       context.attrs
@@ -107,7 +107,7 @@ sidebar: auto
 
   `attrs` 和 `slots` 是组件实例内部对应值的代理, 即使更新了也能拿到最新的值, 不用担心解构拿到过时的值: 
 
-  ```js
+  ``` js
   const MyComponent = {
     setup(props, { attrs }) {
       // 以后某个时刻可能会调用的函数
@@ -130,7 +130,7 @@ sidebar: auto
   `this` (如果可用)会跟其他选项中的表现得完全不一样, `setup` 和其他选项一起用的时候, `this` 表现得不一样会让人很懵逼的. 
   另一个原因是, 新手经常会掉进这样一个陷阱: 
 
-  ```js
+  ``` js
   setup() {
     function onClick() {
       this // 不是你想得那个 `this`
@@ -139,7 +139,7 @@ sidebar: auto
   ```
 
 ### 类型定义
-  ```ts
+  ``` ts
   interface Data {
     [key: string]: unknown
   }
@@ -165,14 +165,14 @@ sidebar: auto
 ## `reactive`
 
 传入一个对象获取该对象得响应式代理, 相当于 2.x 版本的 `Vue.observable()` .
-```js
+``` js
 const obj = reactive({ count: 0 })
 ```
 它会深度遍历并将所有属性转换成响应式的, 它会返回一个 ES2015 的 `Proxy` 对象. 
 建议只使用这个返回响应式代理对象, 不要对传入的原对象做任何操作.
 
 ### 类型定义
-  ```ts
+  ``` ts
   function reactive<T extends object>(raw: T): T
   ```
 
@@ -180,7 +180,7 @@ const obj = reactive({ count: 0 })
 
 传入一个值作为内部值并返回一个响应式且可变的 ref 对象. 这个 ref 对象只有一个指向内部值的属性 `value` .
 
-```js
+``` js
 const count = ref(0)
 console.log(count.value) // 0
 
@@ -194,7 +194,7 @@ console.log(count.value) // 1
   
   在模板中使用一个 `setup()` 返回 `ref` 对象时, 它会自动展开, 不需要使用 `.value` 去访问它的内部值: 
 
-  ```vue
+  ``` vue
   <template>
     <div>{{ count }}</div>
   </template>
@@ -214,7 +214,7 @@ console.log(count.value) // 1
   
   当一个 `ref` 对象作为响应式对象的属性被访问或修改时, 它也会自动展开: 
 
-  ```js
+  ``` js
   const count = ref(0)
   const state = reactive({
     count
@@ -228,7 +228,7 @@ console.log(count.value) // 1
 
   注意, 如果将一个新的 ref 赋值给一个对象中的 ref 属性, 旧的会被替换掉: 
 
-  ```js
+  ``` js
   const otherCount = ref(2)
 
   state.count = otherCount
@@ -238,7 +238,7 @@ console.log(count.value) // 1
 
 - **类型定义**
   
-  ```ts
+  ``` ts
   interface Ref<T> {
     value: T
   }
@@ -248,7 +248,7 @@ console.log(count.value) // 1
 
   有时候我们需要定义类型比较复杂的内部值, 我们可以利用泛型改写 ref 的默认类型: 
 
-  ```ts
+  ``` ts
   const foo = ref<string | number>('foo') // foo 的类型是: Ref<string | number>
 
   foo.value = 123 // 不会报错
@@ -258,13 +258,13 @@ console.log(count.value) // 1
 
 检查一个值是否为 ref 对象. 当判断展开值时十分有用: 
 
-```js
+``` js
 const unwrapped = isRef(foo) ? foo.value : foo
 ``` 
 
 ### 类型定义
   
-  ```ts
+  ``` ts
   function isRef(value: any): value is Ref<any>
   ```
 
@@ -272,7 +272,7 @@ const unwrapped = isRef(foo) ? foo.value : foo
 
 传入一个响应式对象, 返回所有属性被转换成 ref 对象的普通对象:
 
-```js
+``` js
 const state = reactive({
   foo: 1,
   bar: 2
@@ -298,7 +298,7 @@ console.log(state.foo) // 3
 
 Composition 函数返回一个响应式对象时, `toRefs` 十分有用, 可以保证解构返回对象时不会丢失响应性: 
 
-```js
+``` js
 function useFeatureX() {
   const state = reactive({
     foo: 1,
@@ -328,7 +328,7 @@ export default {
 
 传入一个 getter 函数, 根据 getter 函数返回一个只读的 ref 对象. 
 
-```js
+``` js
 const count = ref(1)
 const plusOne = computed(() => count.value + 1)
 
@@ -339,7 +339,7 @@ plusOne.value++ // 会报错
 
 或者, 传入一个带有 `get` 和 `set` 方法的对象, 返回一个可写的 ref 对象.
 
-```js
+``` js
 const count = ref(1)
 const plusOne = computed({
   get: () => count.value + 1,
@@ -352,7 +352,7 @@ console.log(count.value) // 0
 
 ### 类型定义
   
-  ```ts
+  ``` ts
   // 只读
   function computed<T>(getter: () => T): Readonly<Ref<Readonly<T>>>
 
@@ -367,7 +367,7 @@ console.log(count.value) // 0
 
 传入一个对象(reactive, ref 或 普通对象), 返回一个只读的响应式 Proxy 对象: 
 
-```js
+``` js
 const original = reactive({ count: 0 })
 
 const copy = readonly(original)
@@ -390,7 +390,7 @@ copy.count++ // 警告!
 
   在下一个 tick (参考[回调刷新时间](#回调刷新时间)) 执行一个回调函数, 并跟踪函数内的依赖变化, 当依赖发生变化时, 重新执行这个回调函数.
 
-  ```js
+  ``` js
   const count = ref(0)
 
   watch(() => console.log(count.value))
@@ -411,7 +411,7 @@ copy.count++ // 警告!
 
   我们可以这样使用 `watch` :
 
-  ```js
+  ``` js
   // 监听一个 getter 函数
   const state = reactive({ count: 0 })
   watch(() => state.count, (count, prevCount) => { /* ... */ })
@@ -425,7 +425,7 @@ copy.count++ // 警告!
   
   一个 `getter函数` 或 `ref` 可以被视为一个可监听的`源`, 使用数组就可以同时监听多个`源`: 
 
-  ```js
+  ``` js
   watch([fooRef, barRef], ([foo, bar], [prevFoo, prevBar]) => {
     /* ... */
   })
@@ -437,7 +437,7 @@ copy.count++ // 警告!
 
   其他情况下, 可以通过调用 `watch` 函数返回的 `stop` 函数手动停止监听: 
 
-  ```js
+  ``` js
   const stop = watch(() => { /* ... */ })
 
   // 停止监听
@@ -453,7 +453,7 @@ copy.count++ // 警告!
   - 监听回调即将重新调用时
   - 停止监听时
 
-  ```js
+  ``` js
   // 普通用例中 清理回调会作为第一个参数传入
   watch(onCleanup => {
     const token = performAsyncOperation(id.value)
@@ -478,7 +478,7 @@ copy.count++ // 警告!
   我们用传入的注册函数来注册清理函数, 而不是像 React 的 `useEffect` 那样直接返回一个清理函数, 
   是因为 watcher 回调的返回值在异步场景下有特殊作用. 我们经常需要在 watcher 的回调中用 async function 来执行异步操作: 
 
-  ```js
+  ``` js
   const data = ref(null)
   watch(getId, async (id) => {
     data.value = await fetchData(id)
@@ -493,7 +493,7 @@ copy.count++ // 警告!
   Vue 的响应式系统会缓存监听者的回调函数并异步地刷新它们, 这样可以避免同一个"tick"中多个状态改变导致的不必要的重复调用. 
   在内部, 组件的更新函数也是一个监听者回调. 当一个监听者回调进入队列时, 会在所有的组件 render 函数之后执行: 
 
-  ```vue
+  ``` vue
   <template>
     <div>{{ count }}</div>
   </template>
@@ -525,7 +525,7 @@ copy.count++ // 警告!
 
   如果想同步或在组件更新之前调用回调函数, 我们可以给`watch`传入一个带有 flush 选项(默认为`'post'`)的 option :
 
-  ```js
+  ``` js
   // 同步调用
   watch(() => { /* ... */ }, {
     flush: 'sync'
@@ -543,7 +543,7 @@ copy.count++ // 警告!
   这样就会导致在监听回调和生命周期(如 `mounted`)中出现一些重复的逻辑. 3.0 版本提供的 `watch` 与之相反, 默认不会延迟调用, 可以避免一些重复逻辑. 
   如果想要延迟调用可以给`watch`传入一个带有 lazy 选项的 option :
 
-  ```js
+  ``` js
   watch(
     () => state.foo,
     foo => console.log('foo is ' + foo),
@@ -562,7 +562,7 @@ copy.count++ // 警告!
 
   这俩的回调函数可以接收一个包含依赖项信息的 debugger event 对象, 可以在回调函数中写一个 `debugger` 语句用 Chrome Devtools 手动调试: 
 
-  ```js
+  ``` js
   watch(() => { /* ... */ }, {
     onTrigger(e) {
       debugger
@@ -574,7 +574,7 @@ copy.count++ // 警告!
 
 ### 类型定义
 
-  ```ts
+  ``` ts
   type StopHandle = () => void
 
   type WatcherSource<T> = Ref<T> | (() => T)
@@ -633,7 +633,7 @@ copy.count++ // 警告!
 
 生命周期钩子可以通过导入`onXXX`函数直接注册: 
 
-```js
+``` js
 import { onMounted, onUpdated, onUnmounted } from 'vue'
 
 const MyComponent = {
@@ -674,7 +674,7 @@ const MyComponent = {
 
   这俩钩子函数接收一个 `DebuggerEvent` 参数, 这个参数跟 `watch` 第二个参数 options 中的 `onTrack` 和 `onTrigger` 一样: 
 
-  ```js
+  ``` js
   export default {
     setup() {
       onRenderTriggered(e => {
@@ -690,7 +690,7 @@ const MyComponent = {
 `provide` 和 `inject` 提供了依赖注入的功能, 和 2.x 版本的 `provide/inject` 选项类似. 
 这俩函数只能在祖孙(父子)组件的 `setup()` 中调用: 
 
-```js
+``` js
 import { provide, inject } from 'vue'
 
 const ThemeSymbol = Symbol()
@@ -717,7 +717,7 @@ const Descendent = {
   
   可以使用 ref 来保持注入值的响应式: 
 
-  ```js
+  ``` js
   // 提供者
   const themeRef = ref('dark')
   provide(ThemeSymbol, themeRef)
@@ -733,7 +733,7 @@ const Descendent = {
 
 ### 类型定义
   
-  ```ts
+  ``` ts
   interface InjectionKey<T> extends Symbol {}
 
   function provide<T>(key: InjectionKey<T> | string, value: T): void
@@ -746,7 +746,7 @@ const Descendent = {
 
   Vue 提供一个继承了 `Symbol` 的泛型 `InjectionKey`, 可以在提供者和使用者之间保持类型一致: 
 
-  ```ts
+  ``` ts
   import { InjectionKey, provide, inject } from 'vue'
 
   const key: InjectionKey<string> = Symbol()
@@ -758,7 +758,7 @@ const Descendent = {
 
   如果第一个参数传入的是字符串或没有定义类型的符号, 就需要明确指定泛型的类型: 
 
-  ```ts
+  ``` ts
   const foo = inject<number>('foo') // number | undefined
   ```
 
@@ -766,7 +766,7 @@ const Descendent = {
 使用 Composition API 时, `reactive refs` 和 `template refs` 的概念是统一的. 
 我们需要在 `setup()` 中定义一个 ref 并返回给模板, 这样就可以通过 ref 来拿到一个 DOM 或 组件实例的引用了: 
 
-```vue
+``` vue
 <template>
   <div ref="root"></div>
 </template>
@@ -799,7 +799,7 @@ export default {
 
 ### Render 函数 / JSX 的用法
   
-  ```js
+  ``` js
   export default {
     setup() {
       const root = ref(null)
@@ -818,7 +818,7 @@ export default {
 
   现在在 v-for 中 `template refs` 不会做特殊处理了, 而是需要使用 `函数属性的 ref (3.0 版本的新特性)` 来自定义处理: 
 
-  ```vue
+  ``` vue
   <template>
     <div
       v-for="(item, i) in list"
@@ -853,7 +853,7 @@ export default {
 该函数仅用于类型推断. 这个函数可以让 TypeScript 根据传入的组件对象正确推断出传给 `setup()` 的 props 的类型. 
 该函数不会做额外的操作, 传入组件对象并原样返回. 
 
-```ts
+``` ts
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -867,7 +867,7 @@ export default defineComponent({
 ```
 
 如果你的组件除了 `setup()` 没有其他选项, 可以直接传入一个函数: 
-```ts
+``` ts
 import { defineComponent } from 'vue'
 
 // 直接为 props 参数定义类型

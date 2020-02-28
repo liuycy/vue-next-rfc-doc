@@ -13,7 +13,7 @@
 
 ## 基本用例
 
-```js
+``` js
 import { nextTick, observable } from 'vue'
 
 nextTick(() => {})
@@ -33,7 +33,7 @@ const obj = observable({})
 
 目前在 2.x 版本中, 所有的全局 API 都是挂在单个 Vue 对象上. 
 
-```js
+``` js
 import Vue from 'vue'
 
 Vue.nextTick(() => {})
@@ -43,7 +43,7 @@ const obj = Vue.observable({})
 
 在 3.0 版本中, 它们只能通过命名导入使用了: 
 
-```js
+``` js
 import Vue, { nextTick, observable } from 'vue'
 
 Vue.nextTick // undefined
@@ -69,7 +69,7 @@ const obj = observable({})
 除了公共 API, 许多内部的 组件 / helpers 也可以通过命名导出. 这样编译器就可以只导出那些用到了的导入功能. 
 例如下面这个 template : 
 
-```vue
+``` vue
 <transition>
   <div v-show="ok">hello</div>
 </transition>
@@ -77,7 +77,7 @@ const obj = observable({})
 
 可以编译成以下内容(伪代码)
 
-```js
+``` js
 import { h, Transition, applyDirectives, vShow } from 'vue'
 
 export function render() {
@@ -99,7 +99,7 @@ export function render() {
 
 有些插件用到了原本挂在 `Vue` 上的全局 API: 
 
-```js
+``` js
 const plugin = {
   install: Vue => {
     Vue.nextTick(() => {
@@ -111,7 +111,7 @@ const plugin = {
 
 在 3.0 中, 需要改成导入具体 API 的方式: 
 
-```js
+``` js
 import { nextTick } from 'vue'
 
 const plugin = {
@@ -129,10 +129,10 @@ const plugin = {
 - 对于 ES 模块 版本, 应该放开导入并交由用户来处理最终打包
 - 对于 UMD / 浏览器 版本, 应该先尝试全局的 `Vue.h` 并回退到调用 `require`
 
-这是React库的常见做法, 可以在 webpack 和 Rollup 中使用. 大多数 Vue 库也是这样. 我们只需要提供正确的文档和工具支持. 
+这是 React 库的常见做法, 可以在 webpack 和 Rollup 中使用. 大多数 Vue 库也是这样. 我们只需要提供正确的文档和工具支持. 
 
 ## 备选方案
 没有
 
 ## 升级策略
-应该可以提供一份代码 mod 作为迁移工具的一部分
+应该可以提供一份 codemod 作为迁移工具的一部分

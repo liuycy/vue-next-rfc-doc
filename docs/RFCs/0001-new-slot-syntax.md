@@ -18,7 +18,7 @@
 
 使用`v-slot`来定义传给`<foo>`作用域插槽的参数: 
 
-```vue
+``` vue
 <!-- 默认插槽 -->
 <foo v-slot="{ msg }">
   {{ msg }}
@@ -36,7 +36,7 @@
 
 我们首次引入作用域插槽的概念时, 我们要求需要使用`<template slot-scope>`, 这难免会显得臃肿: 
 
-```vue
+``` vue
 <foo>
   <template slot-scope="{ msg }">
     <div>{{ msg }}</div>
@@ -46,7 +46,7 @@
 
 为了简洁, 我们在 2.5 版本允许用户直接在插槽元素上使用`slot-scope`: 
 
-```vue
+``` vue
 <foo>
   <div slot-scope="{ msg }">
     {{ msg }}
@@ -56,7 +56,7 @@
 
 这就意味着组件也可以这样用: 
 
-```vue
+``` vue
 <foo>
   <bar slot-scope="{ msg }">
     {{ msg }}
@@ -69,7 +69,7 @@
 
 嵌套越多情况越糟: 
 
-```vue
+``` vue
 <foo>
   <bar slot-scope="foo">
     <baz slot-scope="bar">
@@ -85,7 +85,7 @@
 
 有人建议我们应该允许把`slot-scope`放在提供 scope 变量的组件本身上: 
 
-```vue
+``` vue
 <foo slot-scope="foo">
   {{ foo }}
 </foo>
@@ -93,7 +93,7 @@
 
 可惜这样做会导致组件嵌套产生歧义: 
 
-```vue
+``` vue
 <parent>
   <foo slot-scope="foo"> <!-- 这个变量是 <parent> 还是 <foo> 提供的 ? -->
     {{ foo }}
@@ -117,7 +117,7 @@
 
 在`template`上使用这个指令来表示传给组件的插槽, `指令的参数`可以表示插槽的名称: 
 
-```vue
+``` vue
 <foo>
   <template v-slot:header>
     <div class="header"></div>
@@ -135,7 +135,7 @@
 
 这个指令也可以接收作用域插槽传过来的 props , 获取的 props 就跟 `slot-scope` 获取的一样, 同样也是支持解构的.
 
-```vue
+``` vue
 <foo>
   <template v-slot:header="{ msg }">
     <div class="header">
@@ -147,7 +147,7 @@
 
 `v-slot`可以不带参数直接用在组件上, 表示默认插槽是一个作用域插槽: 
 
-```vue
+``` vue
 <foo v-slot="{ msg }">
   {{ msg }}
 </foo>
@@ -159,7 +159,7 @@
 
 - 仍为作用域插槽(单个默认插槽)的大多数常见用例提供简洁的语法
   
-  ```vue
+  ``` vue
   <foo v-slot="{ msg }">{{ msg }}</foo>
   ```
 
@@ -167,7 +167,7 @@
 
   让我们再来看看使用当前语法的深层嵌套示例(`slot-scope`) - 注意 `<foo>` 提供的 scope 变量定义在 `<bar>` 上, `<bar>` 提供的变量定义在 `<baz>` 上...
 
-  ```vue
+  ``` vue
   <foo>
     <bar slot-scope="foo">
       <baz slot-scope="bar">
@@ -181,7 +181,7 @@
 
   用新语法可以这样写
 
-  ```vue
+  ``` vue
   <foo v-slot="foo">
     <bar v-slot="bar">
       <baz v-slot="baz">
@@ -197,7 +197,7 @@
 
 #### 默认的文字插槽
 
-```vue
+``` vue
 <!-- 以前 -->
 <foo>
   <template slot-scope="{ msg }">
@@ -213,7 +213,7 @@
 
 #### 默认的元素插槽
 
-```vue
+``` vue
 <!-- 以前 -->
 <foo>
   <div slot-scope="{ msg }">
@@ -231,7 +231,7 @@
 
 #### 默认插槽嵌套
 
-```vue
+``` vue
 <!-- 以前 -->
 <foo>
   <bar slot-scope="foo">
@@ -255,7 +255,7 @@
 
 #### 具名插槽
 
-```vue
+``` vue
 <!-- 以前 -->
 <foo>
   <template slot="one" slot-scope="{ msg }">
@@ -283,7 +283,7 @@
 
 #### 嵌套 & 具名和默认插槽混合使用
 
-```vue
+``` vue
 <!-- 以前 -->
 <foo>
   <bar slot="one" slot-scope="one">

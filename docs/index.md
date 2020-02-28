@@ -19,7 +19,7 @@ sidebar: auto
 
 ## 基本用例
 
-```vue
+``` vue
 <template>
   <button @click="increment">
     Count is: {{ state.count }}, double is: {{ state.double }}
@@ -86,7 +86,7 @@ RFC 中提出的 API 为用户组织代码提供更大的灵活性. 现在的 AP
 
 从简单的任务开始: 声明一些响应式属性
 
-```js
+``` js
 import { reactive } from 'vue'
 
 // 响应式属性
@@ -102,7 +102,7 @@ const state = reactive({
 在 DOM 中渲染一些东西可以被视为一种"副作用"(程序在修改程序外部的状态). 
 要根据响应式属性来触发和重新触发一种副作用的话, 我们需要用到 `watch` API: 
 
-```js
+``` js
 import { reactive, watch } from 'vue'
 
 const state = reactive({
@@ -123,7 +123,7 @@ watch(() => {
 
 继续上面这个例子, 我们加上处理用户输入的逻辑: 
 
-```js
+``` js
 function increment() {
   state.count++
 }
@@ -133,7 +133,7 @@ document.body.addEventListener('click', increment)
 
 不过利用 Vue 的模板系统, 我们不必手写 innerHTML 或 事件监听的处理函数, 我们先用伪代码 `renderTemplate` 来简化一下例子, 把心思放在响应式这块: 
 
-```js
+``` js
 import { reactive, watch } from 'vue'
 
 const state = reactive({
@@ -163,7 +163,7 @@ watch(() => {
 有时我们需要一个随其他状态变化而变化的属性 - 在 Vue 中, 这是通过 *计算属性* 来实现的. 
 我们现在可以使用 `computed` API 来直接创建一个计算属性: 
 
-```js
+``` js
 import { reactive, computed } from 'vue'
 
 const state = reactive({
@@ -175,7 +175,7 @@ const double = computed(() => state.count * 2)
 
 上例中 `computed` 会返回什么 ? 我们猜猜看 `computed` 的内部逻辑, 可能是下面这样的: 
 
-```js
+``` js
 // 简化版的伪代码
 function computed(getter) {
   let value
@@ -193,7 +193,7 @@ function computed(getter) {
 
 将值作为对象的属性再返回这个对象也是一样的, 没有用. 在函数返回时, 这些做法都不能保持这个值的响应式. 为了确保能始终拿到最新的值, 我们需要将值包装进一个对象中, 然后返回这个对象: 
 
-```js
+``` js
 // 简化版的伪代码
 function computed(getter) {
   const ref = {
@@ -209,7 +209,7 @@ function computed(getter) {
 此外, 我们还需要拦截返回对象的 `.value` 属性的 读/写 操作来执行依赖跟踪和更新通知(为了简化, 例子中省略了这些代码). 
 现在我们通过引用来传递计算之后的值了, 不用再担心丢失响应性了. 代价就是我们需要通过 `.value` 来访问最新的值: 
 
-```js
+``` js
 const double = computed(() => state.count * 2)
 
 watch(() => {
@@ -226,7 +226,7 @@ state.count++ // -> 2
 
 除了 computed ref, 我们还可以用 `ref` API 直接创建一个普通的可变 ref: 
 
-```js
+``` js
 const count = ref(0)
 console.log(count.value) // 0
 
@@ -243,7 +243,7 @@ console.log(count.value) // 1
 
 我们稍微改一下之前的 counter 的例子, 用 ref 代替 reactive: 
 
-```js
+``` js
 import { ref, watch } from 'vue'
 
 const count = ref(0)
@@ -267,7 +267,7 @@ watch(() => {
 
 另外, 当一个 ref 作为属性嵌套在一个 reactive 对象中, 它也会自动展开: 
 
-```js
+``` js
 const state = reactive({
   count: 0,
   double: computed(() => state.count * 2)
@@ -282,7 +282,7 @@ console.log(state.double)
 到目前为止, 我们的 UI 代码可以根据用户的输入进行更新了 - 不过代码并不能复用. 
 如果我们想复用代码逻辑, 下一步应该将其重构成一个函数: 
 
-```js
+``` js
 import { reactive, computed, watch } from 'vue'
 
 function setup() {
@@ -317,7 +317,7 @@ watch(() => {
 
 现在我们将 调用 `setup()`、创建监听函数 和 渲染模板 的任务交给框架, 只用 `setup()` 和 模板 来定义一个组件: 
 
-```vue
+``` vue
 <template>
   <button @click="increment">
     Count is: {{ state.count }}, double is: {{ state.double }}
@@ -361,7 +361,7 @@ export default {
 我们已经知道可以使用 `watch` API 来触发属性改变时的副作用了. 
 至于生命周期钩子中的副作用, 我们可以用 `onXXX` API (对应现有的生命周期选项) 来触发: 
 
-```js
+``` js
 import { onMounted } from 'vue'
 
 export default {
@@ -414,7 +414,7 @@ export default {
 > 注意: 提供的这个例子是截至我们编写这篇文章为止的最新代码, 没有任何修改, 源代码现在可能会有些许的改动. 
 
 是时候表演真正的技术啦, 现在我们用 `Composition API` 来改写这个例子中的"新建文件夹"功能: 
-```js
+``` js
 function useCreateFolder (openFolder) {
   // 原本在 data() 里面定义的属性
   const showNewFolder = ref(false)
@@ -455,7 +455,7 @@ function useCreateFolder (openFolder) {
 > 上图中不包含 `import`语句 和 `setup()`函数, 改造后的完整代码可以查看[这里](https://gist.github.com/yyx990803/8854f8f6a97631576c14b63c8acd8f2e)
 
 每个逻辑关注点都写到一个函数里了, 可以不用再跳来跳去了. 组合函数再编辑器里还能折叠起来方便浏览: 
-```js
+``` js
 export default {
   setup() { // ...
   }
@@ -478,7 +478,7 @@ function useCreateFolder(openFolder) { // ...
 ```
 
 `setup()`函数是所有组合函数的入口点: 
-```js
+``` js
 export default {
   setup () {
     // 网络相关
@@ -524,7 +524,7 @@ export default {
 你可以把任何你想复用的组件逻辑导出为一个函数. 你甚至可以导出整个`setup()`来实现`extend`的功能. 
 
 举个例子: 实现跟踪鼠标的位置
-```js
+``` js
 import { ref, onMounted, onUnmounted } from 'vue'
 
 export function useMousePosition() {
@@ -548,7 +548,7 @@ export function useMousePosition() {
 }
 ```
 组件可以导入这个函数: 
-```js
+``` js
 import { useMousePosition } from './mouse'
 
 export default {
@@ -581,7 +581,7 @@ export default {
 
 当你使用组合 API 时, 没有`this`了, 插件可以通过内部调用 [`provide` & `inject`](API.html#provide-inject) 提供组合函数, 举个例子: 
 
-```js
+``` js
 const StoreSymbol = Symbol()
 
 export function provideStore(store) {
@@ -599,7 +599,7 @@ export function useStore() {
 
 在业务代码中: 
 
-```js
+``` js
 // 在根组件中提供 store
 //
 const App = {
@@ -644,7 +644,7 @@ const Child = {
 
 `ref` 和 `reactive` 的使用区别, 可以用 JavaScript 来类比: 
 
-```js
+``` js
 // 第一种: 拆分变量
 let x = 0
 let y = 0
@@ -674,7 +674,7 @@ function updatePosition(e) {
 如果只用 `reactive`, 为了保持响应式, 代码中的 Composition 函数就必须始终返回响应式对象的引用. 
 而且这个对象不能解构或展开: 
 
-```js
+``` js
 // Composition 函数
 function useMousePosition() {
   const pos = reactive({
@@ -712,7 +712,7 @@ export default {
 
 使用 `toRefs` API 可以解除这种限制 - 它会将 响应式对象中的每一个属性转换成对应的 ref: 
 
-```js
+``` js
 function useMousePosition() {
   const pos = reactive({
     x: 0,
@@ -786,7 +786,7 @@ Class API 提案的主要目的是寻找一个能够提供更好的 TypeScript �
 
 这是用泛型参数的例子: 
 
-```ts
+``` ts
 interface Props {
   message: string
 }
@@ -802,7 +802,7 @@ class App extends Component<Props> {
 
 使用 decorator 的例子如下: 
 
-```ts
+``` ts
 class App extends Component<Props> {
   @prop message: string
 }
@@ -837,7 +837,7 @@ Composition API 和 Svelte 3 的依赖编译器的方法在概念上有着异曲
 
 #### Vue
 
-```vue
+``` vue
 <script>
 import { ref, watch, onMounted } from 'vue'
 
@@ -864,7 +864,7 @@ export default {
 
 #### Svelte 
 
-```html
+``` html
 <script>
 import { onMount } from 'svelte'
 

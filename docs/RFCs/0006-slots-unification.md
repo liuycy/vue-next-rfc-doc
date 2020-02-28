@@ -36,7 +36,7 @@
 
 现有的用法还能在 Render 函数中使用. 把 children 传给一个组件时, VNode 和 函数 形式都是支持的: 
 
-```js
+``` js
 h(Comp, [
   h('div', this.msg)
 ])

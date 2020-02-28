@@ -15,13 +15,13 @@
 
 以前的语法
 
-```vue
+``` vue
 <MyComponent v-bind:title.sync="title" />
 ```
 
 现在的语法
 
-```vue
+``` vue
 <MyComponent v-model:title="title" />
 ```
 
@@ -41,7 +41,7 @@
 
 ### 在元素上
 
-```vue
+``` vue
 <input v-model="xxx">
 
 <!-- 是下面的缩写: -->
@@ -52,7 +52,7 @@
 >
 ```
 
-```vue
+``` vue
 <input v-model:aaa="xxx">
 
 <!-- 无效: 会抛出一个编译时错误 -->
@@ -62,7 +62,7 @@
 
 ### 在组件上
 
-```vue
+``` vue
 <MyComponent v-model="xxx" />
 
 <!-- 是下面的缩写: -->
@@ -73,7 +73,7 @@
 />
 ```
 
-```vue
+``` vue
 <MyComponent v-model:aaa="xxx"/>
 
 <!-- 是下面的缩写: -->
