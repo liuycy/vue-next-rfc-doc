@@ -325,7 +325,7 @@
 
 - 新的特殊属性 `slot-props` ([这个草案的先前版本](https://github.com/vuejs/rfcs/blob/8575e72d5a401db5d7206e127e3a6012491d68ed/active-rfcs/0000-new-scoped-slots-syntax.md))
 - [#9180](https://github.com/vuejs/vue/issues/9180)提出的 (`v-scope`) 指令
-- @rellect 在[这里](https://github.com/vuejs/vue/issues/9306#issuecomment-453946190)提议的缩写符号 (`&`)
+- 用户 @rellect 在[这里](https://github.com/vuejs/vue/issues/9306#issuecomment-453946190)提议的缩写符号 (`&`)
 
 ## 升级策略
 
