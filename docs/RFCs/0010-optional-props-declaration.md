@@ -85,11 +85,11 @@ FunctionalComp.props = {
 
 ## 缺点
 
-没有
+N/A
 
 ## 备选方案
 
-没有
+N/A
 
 ## 升级策略
 

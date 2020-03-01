@@ -191,11 +191,11 @@ app.config.isCustomElement = tag => tag.startsWith('ion-')
 
 ## 备选方案
 
-没有
+N/A
 
 ## 升级策略
 
 - 转换很简单 (如基本用例所示).
 - 移除的方法会被抛出警告的占位代码取代, 以引导迁移.
-- 也可以提供 codemod.
+- 也可以提供 codemod 脚本.
 - 至于 `config.ingoredElements`, 提供兼容垫片也很容易.
