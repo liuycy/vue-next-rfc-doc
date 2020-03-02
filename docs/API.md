@@ -76,7 +76,7 @@ sidebar: auto
   }
   ```
 
-  注意: 这个 `props` 对象是响应式的, 即当新的 `props` 传入时, 它会更新并触发 `watch` 的监听回调: 
+  注意: 这个 `props` 对象是响应式的, 即当新的 `props` 传入时, 它会更新并触发 `watchEffect` 或 `watch` 的监听回调: 
 
   ``` js
   export default {
@@ -84,8 +84,23 @@ sidebar: auto
       name: String
     },
     setup(props) {
-      watch(() => {
+      watchEffect(() => {
         console.log(`name is: ` + props.name)
+      })
+    }
+  }
+  ```
+
+  但是, **千万不要** 解构 `props` 对象, 这样会丢失响应性:
+
+  ``` js
+  export default {
+    props: {
+      name: String
+    },
+    setup({ name }) {
+      watchEffect(() => {
+        console.log(`name is: ` + name) // 将不会具有响应性 !
       })
     }
   }
@@ -236,6 +251,18 @@ console.log(count.value) // 1
   console.log(count.value) // 1
   ```
 
+  请注意, `ref` 只有嵌套在响应式`对象`中才会自动展开. 从 `数组` 或 原生集合类型像 `Map` 这些数据结构中访问的 `ref` 不会自动展开: 
+
+  ``` js
+  const arr = reactive([ref(0)])
+  // 这里就需要 .value 了
+  console.log(arr[0].value)
+
+  const map = reactive(new Map([['foo', ref(0)]]))
+  // 这里也需要 .value 
+  console.log(map.get('foo').value)
+  ``` 
+
 - **类型定义**
   
   ``` ts
@@ -372,7 +399,7 @@ const original = reactive({ count: 0 })
 
 const copy = readonly(original)
 
-watch(() => {
+watchEffect(() => {
   // 响应式的监听 没有问题
   console.log(copy.count)
 })
@@ -384,16 +411,14 @@ original.count++
 copy.count++ // 警告!
 ```
 
-## `watch`
+## `watchEffect`
 
-### 基本用法
-
-  在下一个 tick (参考[回调刷新时间](#回调刷新时间)) 执行一个回调函数, 并跟踪函数内的依赖变化, 当依赖发生变化时, 重新执行这个回调函数.
+  立即执行一个回调函数, 并跟踪函数内的依赖变化, 当依赖发生变化时, 重新执行这个回调函数.
 
   ``` js
   const count = ref(0)
 
-  watch(() => console.log(count.value))
+  watchEffect(() => console.log(count.value))
   // -> 打印 0
 
   setTimeout(() => {
@@ -402,15 +427,167 @@ copy.count++ // 警告!
   }, 100)
   ```
 
-### 单个监听源
+### 停止监听
+
+  在 `setup()` 或 声明周期钩子函数中 调用 `watchEffect` 函数时, 监听者会关联到组件的生命周期, 在组件卸载时监听者会自动停止监听. 
+
+  其他情况下, 可以通过函数返回的 stop 函数明确地手动停止监听: 
+
+  ``` js
+  const stop = watchEffect(() => { /* ... */ })
+
+  // 停止监听
+  stop()
+  ```
+
+### 清除副作用
+
+  有些时候监听回调会执行一些异步的副作用, 这些副作用需要在其失效时清除(即副作用完成之前状态就改变了). 
+  所以监听者的回调函数可以接收一个 `onInvalidate` 函数入参, 可以用来注册清理副作用的回调函数.
+  当以下情况发生时, 清理回调会被触发: 
+
+  - 监听回调即将重新调用时
+  - 停止监听时 (如果在 `setup()` 或 生命周期钩子函数中 使用了 `watchEffect`, 则在卸载组件时)
+
+  ``` js
+  // 普通用例中 清理回调会作为第一个参数传入
+  watchEffect(onInvalidate => {
+    const token = performAsyncOperation(id.value)
+    onInvalidate(() => {
+      // id 改变时 或 停止监听时
+      // 取消之前的异步操作
+      token.cancel()
+    })
+  })
+  ```
+
+  我们用传入的注册函数来注册清理函数, 而不是像 React 的 `useEffect` 那样直接返回一个清理函数, 
+  是因为 watcher 回调的返回值在异步场景下有特殊作用. 我们经常需要在 watcher 的回调中用 async function 来执行异步操作: 
+
+  ``` js
+  const data = ref(null)
+  watchEffect(getId, async (id) => {
+    data.value = await fetchData(id)
+  })
+  ```
+
+  我们知道 async function 隐性地返回一个 Promise - 这样的情况下, 我们是无法返回一个需要被立刻注册的清理函数的. 
+  除此之外, 回调返回的 Promise 还会被 Vue 用于内部的异步错误处理.
+
+### 副作用回调刷新时间
+
+  Vue 的响应式系统会缓存监听者的回调函数并异步地刷新它们, 这样可以避免同一个"tick"中多个状态改变导致的不必要的重复调用. 
+  在内部, 组件的更新函数也是一个监听者回调. 当一个监听者回调进入队列时, 会在所有的组件 render 函数之后执行: 
+
+  ``` vue
+  <template>
+    <div>{{ count }}</div>
+  </template>
+
+  <script>
+  export default {
+    setup() {
+      const count = ref(0)
+
+      watchEffect(() => {
+        console.log(count.value)
+      })
+
+      return {
+        count
+      }
+    }
+  }
+  </script>
+  ```
+
+  在上面这个例子中: 
+
+  - count 会在初始运行时同步打印出来
+  - 在 `count` 改变时, 回调函数会在组件**更新之后**调用
+
+  请注意, 初始运行是在组件挂载完成之前调用的, 如果你要在副作用回调中操作 DOM (或 模板 refs), 要把它放在 mounted 钩子函数内: 
+
+  ``` js
+  onMounted(() => {
+    watchEffect(() => {
+      // 访问 DOM 或 模板 refs
+    })
+  })
+  ```
+
+  如果想同步或在组件更新之前调用回调函数, 我们可以给`watchEffect`传入一个带有 flush 选项(默认为`'post'`)的 option :
+
+  ``` js
+  // 同步调用
+  watchEffect(() => { /* ... */ }, {
+    flush: 'sync'
+  })
+
+  // 在组件更新前调用
+  watchEffect(() => { /* ... */ }, {
+    flush: 'pre'
+  })
+  ```
   
-  有些时候我们想要: 
+### 调试
 
-  - 触发回调的依赖更具体一些
-  - 拿到依赖的之前状态的值
+  给`watchEffect`传入带有`onTrack`和`onTrigger`的 option 可以调试监听者的行为. 
 
-  我们可以这样使用 `watch` :
+  - 当 `reactive` 或 `ref` 被作为依赖跟踪时, `onTrack` 会被调用
+  - 当依赖发生变化时, `onTrigger` 会被调用
 
+  这两个回调函数可以接收一个包含依赖项信息的 debugger event 对象, 建议在回调函数中写一个 `debugger` 语句用 Chrome Devtools 手动调试: 
+
+  ``` js
+  watchEffect(() => { /* ... */ }, {
+    onTrigger(e) {
+      debugger
+    }
+  })
+  ```
+
+  `onTrack` 和 `onTrigger` 只在开发模式下有效. 
+
+### 类型定义
+
+  ``` ts
+  function watchEffect(
+    effect: (onInvalidate: InvalidateCbRegistrator) => void,
+    options?: WatchEffectOptions
+  ): StopHandle
+
+  interface WatchEffectOptions {
+    flush?: 'pre' | 'post' | 'sync'
+    onTrack?: (event: DebuggerEvent) => void
+    onTrigger?: (event: DebuggerEvent) => void
+  }
+
+  interface DebuggerEvent {
+    effect: ReactiveEffect
+    target: any
+    type: OperationTypes
+    key: string | symbol | undefined
+  }
+
+  type InvalidateCbRegistrator = (invalidate: () => void) => void
+
+  type StopHandle = () => void
+  ```
+
+## `watch`
+
+`watch` API 完全等价于 2.x 的 `this.$watch` (以及对应的 `watch` 的选项). `watch` 要求传入一个特定的监听源, 并在单独的回调函数中处理副作用. 默认情况下, 回调函数是惰性执行的 - 即只有在监听源发生改变时回调函数才会被调用. 
+
+- 与 `watchEffect` 对比, `watch` 可以: 
+  - 惰性执行副作用回调
+  - 更具体地控制触发监听回调的状态
+  - 访问监听状态的之前值和当前值
+
+### 单个监听源
+
+  一个监听源可以是一个返回值的 getter 函数, 也可以直接是一个 ref:
+  
   ``` js
   // 监听一个 getter 函数
   const state = reactive({ count: 0 })
@@ -431,188 +608,20 @@ copy.count++ // 警告!
   })
   ```
 
-### 停止监听
+### 与 `watchEffect` 共享的行为
 
-  在`setup()`调用`watch`函数时, 监听者会关联到组件的生命周期, 在组件卸载时监听者会自动停止监听. 
-
-  其他情况下, 可以通过调用 `watch` 函数返回的 `stop` 函数手动停止监听: 
-
-  ``` js
-  const stop = watch(() => { /* ... */ })
-
-  // 停止监听
-  stop()
-  ```
-
-### 清除副作用
-
-  有些时候监听回调会执行一些异步的副作用, 当监听值发生改变时应该要阻止这些副作用. 
-  所以监听者的回调函数可以接收一个参数, 这个参数是一个清理副作用的回调函数.
-  当以下情况发生时, 清理回调会触发: 
-
-  - 监听回调即将重新调用时
-  - 停止监听时
-
-  ``` js
-  // 普通用例中 清理回调会作为第一个参数传入
-  watch(onCleanup => {
-    const token = performAsyncOperation(id.value)
-    onCleanup(() => {
-      // id 改变时 或 停止监听时
-      // 阻止之前的异步操作
-      token.cancel()
-    })
-  })
-
-  // 有监听源的用例中 清理回调会作为第三个参数传入
-  watch(idRef, (id, oldId, onCleanup) => {
-    const token = performAsyncOperation(id)
-    onCleanup(() => {
-      // id 改变时 或 停止监听时
-      // 阻止之前的异步操作
-      token.cancel()
-    })
-  })
-  ```
-
-  我们用传入的注册函数来注册清理函数, 而不是像 React 的 `useEffect` 那样直接返回一个清理函数, 
-  是因为 watcher 回调的返回值在异步场景下有特殊作用. 我们经常需要在 watcher 的回调中用 async function 来执行异步操作: 
-
-  ``` js
-  const data = ref(null)
-  watch(getId, async (id) => {
-    data.value = await fetchData(id)
-  })
-  ```
-
-  我们知道 async function 隐性地返回一个 Promise - 这样的情况下, 我们是无法返回一个需要被立刻注册的清理函数的. 
-  除此之外, 回调返回的 Promise 还会被 Vue 用于内部的异步错误处理.
-
-### 回调刷新时间
-
-  Vue 的响应式系统会缓存监听者的回调函数并异步地刷新它们, 这样可以避免同一个"tick"中多个状态改变导致的不必要的重复调用. 
-  在内部, 组件的更新函数也是一个监听者回调. 当一个监听者回调进入队列时, 会在所有的组件 render 函数之后执行: 
-
-  ``` vue
-  <template>
-    <div>{{ count }}</div>
-  </template>
-
-  <script>
-  export default {
-    setup() {
-      const count = ref(0)
-
-      watch(() => {
-        console.log(count.value)
-      })
-
-      return {
-        count
-      }
-    }
-  }
-  </script>
-  ```
-
-  在上面这个例子中: 
-
-  - count 不是立即同步打印
-  - 在组件挂载之后, 回调函数会优先调用
-  - 在 `count` 改变时, 回调函数会在组件更新之后调用
-
-  经验法则: 当回调函数被调用时, 组件状态和 DOM 状态早已更新完毕. 
-
-  如果想同步或在组件更新之前调用回调函数, 我们可以给`watch`传入一个带有 flush 选项(默认为`'post'`)的 option :
-
-  ``` js
-  // 同步调用
-  watch(() => { /* ... */ }, {
-    flush: 'sync'
-  })
-
-  // 在组件更新前调用
-  watch(() => { /* ... */ }, {
-    flush: 'pre'
-  })
-  ```
-
-### 延迟调用
-
-  在 2.x 版本中, `this.$watch` 和 `watch 选项` 的默认行为就是延迟调用的: 它会先执行一下 getter 函数, 但只在依赖改变时触发回调函数. 
-  这样就会导致在监听回调和生命周期(如 `mounted`)中出现一些重复的逻辑. 3.0 版本提供的 `watch` 与之相反, 默认不会延迟调用, 可以避免一些重复逻辑. 
-  如果想要延迟调用可以给`watch`传入一个带有 lazy 选项的 option :
-
-  ``` js
-  watch(
-    () => state.foo,
-    foo => console.log('foo is ' + foo),
-    { lazy: true }
-  )
-  ```
-
-  注意: lazy 只作用于 getter + callback 这种形式, 在只传入回调函数的形式中无效. 
-
-### 调试
-
-  给`watch`传入带有`onTrack`和`onTrigger`的 option 可以调试监听者的行为. 
-
-  - 当 `reactive` 或 `ref` 被作为依赖跟踪时, `onTrack` 会被调用
-  - 当依赖发生变化时, `onTrigger` 会被调用
-
-  这俩的回调函数可以接收一个包含依赖项信息的 debugger event 对象, 可以在回调函数中写一个 `debugger` 语句用 Chrome Devtools 手动调试: 
-
-  ``` js
-  watch(() => { /* ... */ }, {
-    onTrigger(e) {
-      debugger
-    }
-  })
-  ```
-
-  `onTrack` 和 `onTrigger` 只在开发模式下有效. 
+`watch` 和 `watchEffect` 在[停止监听](#停止监听), [清除副作用](#清除副作用)(`onInvalidate`回调入参会作为第三个参数传入), [副作用回调刷新时间](#副作用回调刷新时间) 和 [调试](#调试) 等方面行为一致.
 
 ### 类型定义
 
   ``` ts
-  type StopHandle = () => void
-
-  type WatcherSource<T> = Ref<T> | (() => T)
-
-  type MapSources<T> = {
-    [K in keyof T]: T[K] extends WatcherSource<infer V> ? V : never
-  }
-
-  type InvalidationRegister = (invalidate: () => void) => void
-
-  interface DebuggerEvent {
-    effect: ReactiveEffect
-    target: any
-    type: OperationTypes
-    key: string | symbol | undefined
-  }
-
-  interface WatchOptions {
-    lazy?: boolean
-    flush?: 'pre' | 'post' | 'sync'
-    deep?: boolean
-    onTrack?: (event: DebuggerEvent) => void
-    onTrigger?: (event: DebuggerEvent) => void
-  }
-
-  // 基本用法
-  function watch(
-    effect: (onInvalidate: InvalidationRegister) => void,
-    options?: WatchOptions
-  ): StopHandle
-
   // 单个监听源
   function watch<T>(
     source: WatcherSource<T>,
-    effect: (
+    callback: (
       value: T,
       oldValue: T,
-      onInvalidate: InvalidationRegister
+      onInvalidate: InvalidateCbRegistrator
     ) => void,
     options?: WatchOptions
   ): StopHandle
@@ -620,13 +629,25 @@ copy.count++ // 警告!
   // 多个监听源
   function watch<T extends WatcherSource<unknown>[]>(
     sources: T
-    effect: (
+    callback: (
       values: MapSources<T>,
       oldValues: MapSources<T>,
-      onInvalidate: InvalidationRegister
+      onInvalidate: InvalidateCbRegistrator
     ) => void,
     options? : WatchOptions
   ): StopHandle
+
+  type WatcherSource<T> = Ref<T> | (() => T)
+
+  type MapSources<T> = {
+    [K in keyof T]: T[K] extends WatcherSource<infer V> ? V : never
+  }
+
+  // 可以查看 `watchEffect` 类型定义 中 其他共享 options 的定义
+  interface WatchOptions extends WatchEffectOptions {
+    immediate?: boolean // 默认: false
+    deep?: boolean
+  }
   ```
 
 ## `Lifecycle Hooks`
@@ -654,6 +675,8 @@ const MyComponent = {
 这些生命周期注册函数只能在`setup()`中使用, 因为它们依赖于内部的全局状态来定位当前组件实例(正在调用`setup()`的组件实例), 
 不在当前组件下调用这些函数会抛出一个错误.
 
+组件实例上下文也是在生命周期钩子执行时同步设置的, 因此当组件卸载时, 在生命周期钩子内同步创建的监听者和计算属性也会被自动销毁
+
 ### 与 2.x 版本生命周期对应的 Composition API
   - ~~`beforeCreate`~~ -> 使用 `setup()`
   - ~~`created`~~      -> 使用 `setup()`
@@ -672,7 +695,7 @@ const MyComponent = {
   - `onRenderTracked`
   - `onRenderTriggered`
 
-  这俩钩子函数接收一个 `DebuggerEvent` 参数, 这个参数跟 `watch` 第二个参数 options 中的 `onTrack` 和 `onTrigger` 一样: 
+  这俩钩子函数接收一个 `DebuggerEvent` 参数, 这个参数跟 `watchEffect` 第二个参数 options 中的 `onTrack` 和 `onTrigger` 一样: 
 
   ``` js
   export default {
@@ -724,7 +747,7 @@ const Descendent = {
 
   // 使用者
   const theme = inject(ThemeSymbol, ref('light'))
-  watch(() => {
+  watchEffect(() => {
     console.log(`theme set to: ${theme.value}`)
   })
   ```

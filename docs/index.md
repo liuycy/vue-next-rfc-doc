@@ -100,26 +100,28 @@ const state = reactive({
 
 响应式属性最基本的用途就是在 Vue 渲染期间使用它, 由于依赖跟踪, 视图会在响应式属性改变时自动更新. 
 在 DOM 中渲染一些东西可以被视为一种"副作用"(程序在修改程序外部的状态). 
-要根据响应式属性来触发和重新触发一种副作用的话, 我们需要用到 `watch` API: 
+要根据响应式属性来触发和重新触发一种副作用的话, 我们需要用到 `watchEffect` API: 
 
 ``` js
-import { reactive, watch } from 'vue'
+import { reactive, watchEffect } from 'vue'
 
 const state = reactive({
   count: 0
 })
 
-watch(() => {
+watchEffect(() => {
   document.body.innerHTML = `count is ${state.count}`
 })
 ```
 
-`watch` 需要传入一个回调函数来触发副作用(在上例中, 设置 `innerHTML` 为副作用). 
+`watchEffect` 需要传入一个回调函数来触发副作用(在上例中, 设置 `innerHTML` 为副作用). 
 回调函数会立即被调用, 并将所有它用到的响应式属性作为依赖跟踪. 在上例中, `state.count` 会在回调函数调用后被作为依赖跟踪. 
 将来 `state.count` 发生改变时, 回调函数会被再次调用. 
 
 这就是 Vue 响应式系统的基本原理. 当你在组件的 `data()` 返回一个对象时, 在内部会调用 `reactive()` 将它变成响应式的. 
 使用这些响应式属性的模板会被编译成 render 函数 (可以认为是更高效的 `innerHTML`)
+
+> `watchEffect` 类似于 2.x 的 `watch` 选项, 但它不需要将所观察的数据源和副作用回调分离. Composition API 还提供了一个 `watch` API, 其功能与 2.x 选项完全相同
 
 继续上面这个例子, 我们加上处理用户输入的逻辑: 
 
@@ -134,7 +136,7 @@ document.body.addEventListener('click', increment)
 不过利用 Vue 的模板系统, 我们不必手写 innerHTML 或 事件监听的处理函数, 我们先用伪代码 `renderTemplate` 来简化一下例子, 把心思放在响应式这块: 
 
 ``` js
-import { reactive, watch } from 'vue'
+import { reactive, watchEffect } from 'vue'
 
 const state = reactive({
   count: 0
@@ -149,7 +151,7 @@ const renderContext = {
   increment
 }
 
-watch(() => {
+watchEffect(() => {
   // 伪代码, 不是真实 API
   renderTemplate(
     `<button @click="increment">{{ state.count }}</button>`,
@@ -179,7 +181,7 @@ const double = computed(() => state.count * 2)
 // 简化版的伪代码
 function computed(getter) {
   let value
-  watch(() => {
+  watchEffect(() => {
     value = getter()
   })
   return value
@@ -199,7 +201,7 @@ function computed(getter) {
   const ref = {
     value: null
   }
-  watch(() => {
+  watchEffect(() => {
     ref.value = getter()
   })
   return ref
@@ -212,7 +214,7 @@ function computed(getter) {
 ``` js
 const double = computed(() => state.count * 2)
 
-watch(() => {
+watchEffect(() => {
   console.log(double.value)
 }) // -> 0
 
@@ -244,7 +246,7 @@ console.log(count.value) // 1
 我们稍微改一下之前的 counter 的例子, 用 ref 代替 reactive: 
 
 ``` js
-import { ref, watch } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const count = ref(0)
 
@@ -257,7 +259,7 @@ const renderContext = {
   increment
 }
 
-watch(() => {
+watchEffect(() => {
   renderTemplate(
     `<button @click="increment">{{ count }}</button>`,
     renderContext
@@ -283,7 +285,7 @@ console.log(state.double)
 如果我们想复用代码逻辑, 下一步应该将其重构成一个函数: 
 
 ``` js
-import { reactive, computed, watch } from 'vue'
+import { reactive, computed, watchEffect } from 'vue'
 
 function setup() {
   const state = reactive({
@@ -303,7 +305,7 @@ function setup() {
 
 const renderContext = setup()
 
-watch(() => {
+watchEffect(() => {
   renderTemplate(
     `<button @click="increment">
       Count is: {{ state.count }}, double is: {{ state.double }}
@@ -358,7 +360,7 @@ export default {
 - 某些属性改变时
 - 组件`mounted`、`updated`或`unmounted`时(生命周期钩子)
 
-我们已经知道可以使用 `watch` API 来触发属性改变时的副作用了. 
+我们已经知道可以使用 `watchEffect` 和 `watch` API 来触发属性改变时的副作用了. 
 至于生命周期钩子中的副作用, 我们可以用 `onXXX` API (对应现有的生命周期选项) 来触发: 
 
 ``` js
@@ -387,14 +389,14 @@ export default {
 #### 什么是"有组织的代码"
 我们回想一下到底什么才是"有组织的代码". 编写有组织的代码的目的就是让代码更容易阅读和理解. 
 要如何才能做到"理解"代码? 仅凭组件中包含了哪些选项就能说我们"理解"它了吗? 
-你有看过其他开发者写的大型组件吗(比如[这个](https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L198-L404)), 看懂了吗?
+你有看过其他开发者写的大型组件吗(比如[这个](https://github.com/vuejs/vue-cli/blob/a09407dd5b9f18ace7501ddb603b95e31d6d93c0/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L198-L404)), 看懂了吗?
 
 想想你要怎么跟你的同事梳理类似上面链接中的大型组件的逻辑. 你很可能会从"这个组件会处理 X, Y 和 Z"说起, 而不是"这个组件有哪些数据, 计算属性和方法". 
 在理解组件时, 我们更在意"组件试图做什么"(即代码背后的意图), 而不是"这个组件用了哪些选项". 基于选项的 API 自然可以回答后者, 但却很难解释前者.
 
 #### 逻辑关注点 vs 选项类型
 我们将组件处理的"X, Y 和 Z"定义为**逻辑关注点**. 小型单一的组件通常不存在可读性问题, 因为整个组件就处理一个关注点. 
-但在高级点的使用场景下这个问题就会变得很突出, 比如[Vue CLI UI file explorer](https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L198-L404)
+但在高级点的使用场景下这个问题就会变得很突出, 比如[Vue CLI UI file explorer](https://github.com/vuejs/vue-cli/blob/a09407dd5b9f18ace7501ddb603b95e31d6d93c0/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L198-L404)
 这个组件, 需要处理许多不同的逻辑关注点: 
 - 跟踪当前文件夹状态
 - 处理文件夹导航(打开, 关闭, 刷新...)
@@ -403,8 +405,11 @@ export default {
 - 是否显示隐藏文件夹
 - 处理当前工作目录的修改
 
-如果你在阅读基于选项 API 的代码, 你肯定很难立刻找出并区分这些逻辑关注点. 你会看到同一个功能被拆的到处都是, "创建新文件夹"功能用了两个数据属性，一个计算属性和一个方法, 而且方法定义在属性下面一百多行的地方. 
-如果我们用颜色标记一下同一个功能, 你就会发现它们非常分散: 
+如果你在阅读基于选项 API 的代码, 你肯定很难立刻找出并区分这些逻辑关注点. 你会看到同一个功能被拆的到处都是, 
+"创建新文件夹"功能用了[两个数据属性]((https://github.com/vuejs/vue-cli/blob/a09407dd5b9f18ace7501ddb603b95e31d6d93c0/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L221-L222))，
+一个[计算属性](https://github.com/vuejs/vue-cli/blob/a09407dd5b9f18ace7501ddb603b95e31d6d93c0/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L240)
+和[一个方法](https://github.com/vuejs/vue-cli/blob/a09407dd5b9f18ace7501ddb603b95e31d6d93c0/packages/@vue/cli-ui/src/components/folder/FolderExplorer.vue#L387), 
+而且方法定义在属性下面一百多行的地方. 如果我们用颜色标记一下同一个功能, 你就会发现它们非常分散: 
 
 <div style="text-align: center;">
   <img src="https://user-images.githubusercontent.com/499550/62783021-7ce24400-ba89-11e9-9dd3-36f4f6b1fae2.png">
@@ -616,7 +621,7 @@ const Child = {
 }
 ```
 
-注意, `store` 也可以通过 app 级别的 全局 API 提供, 但在业务代码中 `useStore` 内的代码不需要改变. 
+注意, `store` 也可以通过 [全局 API 更改](/RFCs/0009-global-api-change.html#provide-inject) 提到的 app 级别的 API 提供, 但在业务代码中 `useStore` 内的代码不需要改变. 
 
 ## 缺点
 
@@ -763,7 +768,7 @@ Composition API 并不依赖于共享作用域的上下文. 这样可以将逻�
 任何 JavaScript 代码都是从入口函数开始的(可以认为是程序的`setup()`). 我们根据逻辑关注点将代码分为函数和模块. 
 **Composition API 同样也可以拆分组件**. 换言之, 你 JavaScript 写得6, Composition API 你就能写得6. 
 
-## 采用策略
+## 升级策略
 
 Composition API 是纯增量代码, 不会影响/弃用任何 2.x 现有的 API. 
 现在可以通过[`@vue/composition 库`](https://github.com/vuejs/composition-api/)在 2.x 上体验 Composition API 了. 
@@ -839,7 +844,7 @@ Composition API 和 Svelte 3 的依赖编译器的方法在概念上有着异曲
 
 ``` vue
 <script>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watchEffect, onMounted } from 'vue'
 
 export default {
   setup() {
@@ -849,7 +854,7 @@ export default {
       count.value++
     }
 
-    watch(() => console.log(count.value))
+    watchEffect(() => console.log(count.value))
 
     onMounted(() => console.log('mounted!'))
 
