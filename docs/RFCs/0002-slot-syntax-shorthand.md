@@ -9,7 +9,7 @@
 
 ## 概要
 
-请务必先阅读 [rfc-0001](/doc/RFCs/0001-new-slot-syntax.md), 本章说的是前一章提出的 `v-slot` 语法的缩写. 
+请务必先阅读 [rfc-0001](./doc/RFCs/0001-new-slot-syntax.md), 本章说的是前一章提出的 `v-slot` 语法的缩写. 
 
 ## 基本用例
 

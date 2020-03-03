@@ -12,7 +12,7 @@
 重新设置 app 的 引导程序 和 API.
 
 - 能够改变 Vue 行为的全局 API 现在移到通过 `createApp` 方法创建的 app 实例上了, 并且只能影响到这个 app 实例的行为了.
-- 不会改变 Vue 行为的全局 API (如: `nextTick` 和 [Advanced Reactivity API](https://github.com/vuejs/rfcs/pull/22)提到的 API) 现在通过命名导出了, 详见[全局 API treeshaking](/RFCs/0004-global-api-treeshaking.html).
+- 不会改变 Vue 行为的全局 API (如: `nextTick` 和 [Advanced Reactivity API](https://github.com/vuejs/rfcs/pull/22)提到的 API) 现在通过命名导出了, 详见[全局 API treeshaking](./RFCs/0004-global-api-treeshaking.html).
 
 ## 基本用例
 
@@ -101,7 +101,7 @@ app 实例上暴露了当前全局 API 的子集, 任何可以改变 Vue 行为�
   - `Vue.mixin` -> `app.mixin`
   - `Vue.use` -> `app.use`
 
-所有不会改变 Vue 行为的全局 API 现在都通过命名导出了, 详见[全局 API treeshaking](/RFCs/0004-global-api-treeshaking.html).
+所有不会改变 Vue 行为的全局 API 现在都通过命名导出了, 详见[全局 API treeshaking](./RFCs/0004-global-api-treeshaking.html).
 
 唯一的例外是 `Vue.extend`, 因为 `Vue` 不再是一个可以 new 构造函数, `Vue.extend` 在构造函数拓展这块就没有什么意义了. 
 

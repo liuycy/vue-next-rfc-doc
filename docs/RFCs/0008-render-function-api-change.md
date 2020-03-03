@@ -150,7 +150,7 @@ export default {
 
 这里的 `props`, `slots` 和 `attrs` 都是 Proxy 对象, 所以当它们在 render 函数中使用时, 总是指向最新的值. 
 
-更多关于 `setup` 的细节, 请查看 [Composition API](/api.html#setup).
+更多关于 `setup` 的细节, 请查看 [Composition API](./api.html#setup).
 
 ### 函数组件签名
 
@@ -167,7 +167,7 @@ const FunctionalComp = (props, { slots, attrs, emit }) => {
 - `props` 和 `slots` 有对应的值
 - 不再需要 `data` 和 `children` (可以用 `props` 和 `slots`)
 - `listeners` 会被包含在 `attrs`
-- `injections` 可以被新的 `inject` API 取代 (详见 [Composition API](/api.html#provide-inject)):
+- `injections` 可以被新的 `inject` API 取代 (详见 [Composition API](./api.html#provide-inject)):
 
   ``` js
   import { inject } from 'vue'

@@ -80,7 +80,7 @@ RFC 中提出的 API 为用户组织代码提供更大的灵活性. 现在的 AP
 ### API 简介
 
 这里提出的 API 没有引入新概念, 而是将 Vue 的核心功能(如: 创建和监听响应式属性)作为独立的函数暴露出来. 
-我们将介绍最基本的几个 API 以及如何使用它们代替 2.x 的选项. 注意本节主要介绍基本概念, 详细完整的 API 请查看[API Reference](/API)
+我们将介绍最基本的几个 API 以及如何使用它们代替 2.x 的选项. 注意本节主要介绍基本概念, 详细完整的 API 请查看[API Reference](./API)
 
 #### 响应式属性和副作用
 
@@ -224,7 +224,7 @@ state.count++ // -> 2
 在上例中, 我们将 `double` 称为 `ref` 对象, 因为它是内部值的响应式引用. 
 
 > 想必你已经知道 Vue 中早就有 "refs" 的概念了, 但仅用于模板引用 DOM 节点或组件实例. 
-> 点击[这里](/API.html#template-refs)了解新的 refs 系统是如何同时被用于逻辑属性和模板引用的. 
+> 点击[这里](./API.html#template-refs)了解新的 refs 系统是如何同时被用于逻辑属性和模板引用的. 
 
 除了 computed ref, 我们还可以用 `ref` API 直接创建一个普通的可变 ref: 
 
@@ -378,7 +378,7 @@ export default {
 这些生命周期注册函数只能在 `setup` 内使用, 它会利用内部全局属性自动找出正在调用 `setup` 的当前组件实例. 
 这样设计是为了减少将逻辑提取到外部函数时的摩擦. 
 
-> 关于 API 的更多细节请查看[API Reference](/API), 不过我们建议你先看完下面的内容. 
+> 关于 API 的更多细节请查看[API Reference](./API), 不过我们建议你先看完下面的内容. 
 
 ### 代码组织
 
@@ -621,7 +621,7 @@ const Child = {
 }
 ```
 
-注意, `store` 也可以通过 [全局 API 更改](/RFCs/0009-global-api-change.html#provide-inject) 提到的 app 级别的 API 提供, 但在业务代码中 `useStore` 内的代码不需要改变. 
+注意, `store` 也可以通过 [全局 API 更改](./RFCs/0009-global-api-change.html#provide-inject) 提到的 app 级别的 API 提供, 但在业务代码中 `useStore` 内的代码不需要改变. 
 
 ## 缺点
 

@@ -9,7 +9,7 @@
 
 ## 概要
 
-调整组件的 `v-model` API, 基于 [使用 `v-model` 取代 `v-bind` 的 `.sync` 修饰符](/RFCs/0005-replace-v-bind-sync-with-v-model-argument.html).
+调整组件的 `v-model` API, 基于 [使用 `v-model` 取代 `v-bind` 的 `.sync` 修饰符](./RFCs/0005-replace-v-bind-sync-with-v-model-argument.html).
 
 ## 基本用例
 
@@ -29,7 +29,7 @@ h(Comp, {
 然而, 这样组件需要让 这个`value` 一直绑定到 `v-model`, 可是组件也许需要这个 `value` 用于其他用途. 
 
 在 2.2 版本, 我们引入了组件选项 `model`, 可以在组件内配置 `v-model` 使用的 prop 和 event, 但一个组件还是只能使用一个 `v-model`. 
-实际上我们需要在组件上同步多个这样的值, 这些值就只能使用 `v-bind.sync` 了. 我们注意到 `v-model` 和 `v-bind.sync` 从根本上是一样的, 所以可以合并成一个指令, 就像[使用 `v-model` 取代 `v-bind` 的 `.sync` 修饰符](/RFCs/0005-replace-v-bind-sync-with-v-model-argument.html)提到的那样.
+实际上我们需要在组件上同步多个这样的值, 这些值就只能使用 `v-bind.sync` 了. 我们注意到 `v-model` 和 `v-bind.sync` 从根本上是一样的, 所以可以合并成一个指令, 就像[使用 `v-model` 取代 `v-bind` 的 `.sync` 修饰符](./RFCs/0005-replace-v-bind-sync-with-v-model-argument.html)提到的那样.
 
 ## 设计细节
 
@@ -42,7 +42,7 @@ h(Comp, {
 })
 ```
 
-如果组件要使用 不带参数的 `v-model`, 组件内需要定义一个叫 `modelValue` 的 prop. 并在子组件应该通过触发 `"update:modelValue"` 事件来同步它的值 (更多细节请查看[render 函数 API 更改](/RFCs/0008-render-function-api-change.html)中关于 VNode Props 结构更改的部分)
+如果组件要使用 不带参数的 `v-model`, 组件内需要定义一个叫 `modelValue` 的 prop. 并在子组件应该通过触发 `"update:modelValue"` 事件来同步它的值 (更多细节请查看[render 函数 API 更改](./RFCs/0008-render-function-api-change.html)中关于 VNode Props 结构更改的部分)
 
 编译输入默认会给 `prop` 和 `event` 带上 `model` 前缀来避免和普通的 prop 冲突
 
