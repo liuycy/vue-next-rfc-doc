@@ -1,4 +1,4 @@
-# 动态指令参数
+# 3. 动态指令参数
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0003-dynamic-directive-arguments.md>
 

@@ -1,4 +1,4 @@
-# 全局 API 更改
+# 9. 全局 API 更改
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0009-global-api-change.md>
 
@@ -12,7 +12,7 @@
 重新设置 app 的 引导程序 和 API.
 
 - 能够改变 Vue 行为的全局 API 现在移到通过 `createApp` 方法创建的 app 实例上了, 并且只能影响到这个 app 实例的行为了.
-- 不会改变 Vue 行为的全局 API (如: `nextTick` 和 [Advanced Reactivity API](https://github.com/vuejs/rfcs/pull/22)提到的 API) 现在通过命名导出了, 详见[全局 API treeshaking](./RFCs/0004-global-api-treeshaking.html).
+- 不会改变 Vue 行为的全局 API (如: `nextTick` 和 [Advanced Reactivity API](https://github.com/vuejs/rfcs/pull/22)提到的 API) 现在通过命名导出了, 详见[全局 API treeshaking](./0004-global-api-treeshaking.md).
 
 ## 基本用例
 
@@ -98,6 +98,8 @@ app 实例上暴露了当前全局 API 的子集, 任何可以改变 Vue 行为�
   - `Vue.config` -> `app.config`
     - `config.productionTip`: 移除. ([更多细节](#移除-configproductiontip))
     - `config.ignoredElements` -> `config.isCustomElement`. ([更多细节](#configignoredelements---configiscustomelement))
+    - `config.keyCodes`: 移除. ([更多细节](./0014-drop-keycode-support.md))
+    - `config.optionMergeStrategies`: [关于该调整的更多细节](#configoptionmergestrategies-行为变更)
 - 资源注册 API
   - `Vue.component` -> `app.component`
   - `Vue.directive` -> `app.directive`
@@ -105,7 +107,7 @@ app 实例上暴露了当前全局 API 的子集, 任何可以改变 Vue 行为�
   - `Vue.mixin` -> `app.mixin`
   - `Vue.use` -> `app.use`
 
-所有不会改变 Vue 行为的全局 API 现在都通过命名导出了, 详见[全局 API treeshaking](./RFCs/0004-global-api-treeshaking.html).
+所有不会改变 Vue 行为的全局 API 现在都通过命名导出了, 详见[全局 API treeshaking](./0004-global-api-treeshaking.md).
 
 唯一的例外是 `Vue.extend`, 因为 `Vue` 不再是一个可以 new 构造函数, `Vue.extend` 在构造函数拓展这块就没有什么意义了. 
 
@@ -133,7 +135,7 @@ app.mount(App, '#app', {
 })
 ```
 
-### 挂载行为与 2.x 的区别
+#### 挂载行为与 2.x 的区别
 
 在使用包含编译器的版本时, 挂载一个没有编写模板的根组件, Vue 会尝试使用挂载目标元素的内容作为模板. 3.x 和 2.x 的行为会有以下区别: 
 
@@ -192,7 +194,14 @@ app.config.isCustomElement = tag => tag.startsWith('ion-')
 - 如果在使用 runtime-only 版本时配置了 `config.isCustomElement`, 会抛出一个警告提示用户在构建配置中传递这个选项
 - 这会是 Vue CLI 配置中的一个新的顶级选项
 
-## Attaching Globally Shared Instance Properties
+### `config.optionMergeStrategies` 行为变更
+
+虽然仍受支持, 但由于 Vue 3 的内部实现变更了, 内置选项不需要合并策略了, 所有不再公开这个 API. `app.config.optionMergeStrategies`默认是一个空对象, 也就是说: 
+
+- 用户必须提供自己的合并策略函数, 无法再复用内置的合并策略了 (例如, 你无法设置 `config.optionMergeStrategies.custom = config.optionMergeStrategies.props`)
+- 无法重写内置的合并策略了
+
+### 添加全局共享实例属性
 
 在 2.x 中, 可以简单地向`Vue.prototype`添加属性注入到全局共享的实例.
 
@@ -229,3 +238,5 @@ N/A
 - 移除的方法会被抛出警告的占位代码取代, 以引导迁移.
 - 也可以提供 codemod 脚本.
 - 至于 `config.ingoredElements`, 提供兼容垫片也很容易.
+- `config.ingoredElements` 可以在兼容版本中使用.
+- `config.optionMergeStrategies` 内置策略可以在兼容版本中使用.

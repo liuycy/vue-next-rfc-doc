@@ -1,4 +1,4 @@
-# 自定义指令 API 更改
+# 12. 自定义指令 API 更改
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0012-custom-directive-api-change.md>
 
@@ -79,7 +79,7 @@ return withDirectives(h('div'), [
 
 其中 `vFoo` 就是用户所写的指令对象, 里面包含了像 `mounted` 和 `updated` 这样的钩子函数. 
 
-`withDirectives` 会返回一个克隆的 VNode, 这个 VNode 包装了用户的钩子函数并作为生命周期注入. (更多细节请查看[render 函数 API 更改](./RFCs/0008-render-function-api-change.html#特别-保留-的-props)): 
+`withDirectives` 会返回一个克隆的 VNode, 这个 VNode 包装了用户的钩子函数并作为生命周期注入. (更多细节请查看[render 函数 API 更改](./0008-render-function-api-change.md#特别-保留-的-props)): 
 
 ``` js
 {

@@ -1,4 +1,4 @@
-# 统一插槽
+# 6. 统一插槽
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0006-slots-unification.md>
 

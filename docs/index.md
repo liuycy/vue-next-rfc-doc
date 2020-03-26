@@ -621,7 +621,7 @@ const Child = {
 }
 ```
 
-注意, `store` 也可以通过 [全局 API 更改](./RFCs/0009-global-api-change.html#provide-inject) 提到的 app 级别的 API 提供, 但在业务代码中 `useStore` 内的代码不需要改变. 
+注意, `store` 也可以通过 [全局 API 更改](./RFCs/0009-global-api-change.md#provide-inject) 提到的 app 级别的 API 提供, 但在业务代码中 `useStore` 内的代码不需要改变. 
 
 ## 缺点
 

@@ -1,4 +1,4 @@
-# 新的插槽语法
+# 1. 新的插槽语法
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0001-new-slot-syntax.md>
 

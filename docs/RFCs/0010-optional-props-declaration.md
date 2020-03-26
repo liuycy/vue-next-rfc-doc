@@ -1,4 +1,4 @@
-# 可选的 props 声明
+# 10. 可选的 props 声明
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0010-optional-props-declaration.md>
 
@@ -53,7 +53,7 @@ export default {}
 
 ### 函数式组件
 
-这是一个基于普通函数的函数式组件, 详见[函数式组件和异步组件 API 更改](./RFCs/0007-functional-async-api-change.html).
+这是一个基于普通函数的函数式组件, 详见[函数式组件和异步组件 API 更改](./0007-functional-async-api-change.md).
 
 ``` js
 const FunctionalComp = props => {
@@ -81,7 +81,7 @@ FunctionalComp.props = {
 }
 ```
 
-更多关于新函数式组件的签名, 请查看[render 函数 API 更改](./RFCs/0008-render-function-api-change.html)
+更多关于新函数式组件的签名, 请查看[render 函数 API 更改](./0008-render-function-api-change.md)
 
 ## 缺点
 
