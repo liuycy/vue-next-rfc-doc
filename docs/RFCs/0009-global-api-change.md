@@ -28,6 +28,8 @@ Vue.mixin(/* ... */)
 Vue.component(/* ... */)
 Vue.directive(/* ... */)
 
+Vue.prototype.customProperty = () => {}
+
 new Vue({
   render: h => h(App)
 }).$mount('#app')
@@ -47,7 +49,9 @@ app.mixin(/* ... */)
 app.component(/* ... */)
 app.directive(/* ... */)
 
-app.mount('#app')
+app.config.globalProperties.customProperty = () => {}
+
+app.mount(App, '#app')
 ```
 
 ## 动机
@@ -129,6 +133,18 @@ app.mount(App, '#app', {
 })
 ```
 
+### 挂载行为与 2.x 的区别
+
+在使用包含编译器的版本时, 挂载一个没有编写模板的根组件, Vue 会尝试使用挂载目标元素的内容作为模板. 3.x 和 2.x 的行为会有以下区别: 
+
+- 在 2.x 中, 根实例会使用目标元素的`outerHTML`作为模板, 并替换掉目标元素.
+
+- 在 3.x 中, 根实例会使用目标元素的`innerHTML`作为模板, 但只会替换掉目标元素的子元素(children).
+
+在大部分情况下不会影响你的 app, 唯一的副作用是, 如果目标元素有多个子元素, 根实例会作为一个片段(fragment)挂载, 而`this.$el`会指向片段(DOM Comment 节点)的开始节点
+
+在 Vue 3 中, 由于可以使用 Fragments, 推荐使用模板的 refs 来操作 DOM 节点, 不要使用 `this.$el`. 
+
 ### Provide / Inject
 
 app 实例提供的依赖可以被 app 内的任何组件注入: 
@@ -175,6 +191,20 @@ app.config.isCustomElement = tag => tag.startsWith('ion-')
 
 - 如果在使用 runtime-only 版本时配置了 `config.isCustomElement`, 会抛出一个警告提示用户在构建配置中传递这个选项
 - 这会是 Vue CLI 配置中的一个新的顶级选项
+
+## Attaching Globally Shared Instance Properties
+
+在 2.x 中, 可以简单地向`Vue.prototype`添加属性注入到全局共享的实例.
+
+在 Vue 3 中, 由于 `Vue` 不再是一个构造函数, 所以也不再支持这样做了. 不过, 共享的实例属性应该添加到 app 实例的 `config.globalProperties` 上.
+
+``` js
+// 之前
+Vue.prototype.$http = () => {}
+// 之后
+const app = createApp()
+app.config.globalProperties.$http = () => {}
+```
 
 ## 缺点
 
