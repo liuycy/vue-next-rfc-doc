@@ -66,7 +66,8 @@ module.exports = {
             "0017-transition-as-root",
             "0019-remove-data-object-declaration",
             "0020-events-api-change",
-            "0021-router-link-scoped-slot"
+            "0021-router-link-scoped-slot",
+            "0022-router-merge-meta-routelocation"
           ]
         }
       ]
