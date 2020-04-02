@@ -35,5 +35,6 @@
     ├── 0019-remove-data-object-declaration.md
     ├── 0020-events-api-change.md
     ├── 0021-router-link-scoped-slot.md
-    └── 0022-router-merge-meta-routelocation.md
+    ├── 0022-router-merge-meta-routelocation.md
+    └── 0023-scoped-styles-changes.md
 ```

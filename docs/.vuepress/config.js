@@ -67,7 +67,8 @@ module.exports = {
             "0019-remove-data-object-declaration",
             "0020-events-api-change",
             "0021-router-link-scoped-slot",
-            "0022-router-merge-meta-routelocation"
+            "0022-router-merge-meta-routelocation",
+            "0023-scoped-styles-changes"
           ]
         }
       ]
