@@ -37,5 +37,6 @@
     ├── 0021-router-link-scoped-slot.md
     ├── 0022-router-merge-meta-routelocation.md
     ├── 0023-scoped-styles-changes.md
-    └── 0024-attribute-coercion-behavior.md
+    ├── 0024-attribute-coercion-behavior.md
+    └── 0025-teleport.md
 ```

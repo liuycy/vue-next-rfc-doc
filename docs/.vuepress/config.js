@@ -69,7 +69,8 @@ module.exports = {
             "0021-router-link-scoped-slot",
             "0022-router-merge-meta-routelocation",
             "0023-scoped-styles-changes",
-            "0024-attribute-coercion-behavior"
+            "0024-attribute-coercion-behavior",
+            "0025-teleport"
           ]
         }
       ]
