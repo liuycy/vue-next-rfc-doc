@@ -71,7 +71,8 @@ module.exports = {
             "0023-scoped-styles-changes",
             "0024-attribute-coercion-behavior",
             "0025-teleport",
-            "0026-async-component-api"
+            "0026-async-component-api",
+            "0027-custom-elements-interop"
           ]
         }
       ]
