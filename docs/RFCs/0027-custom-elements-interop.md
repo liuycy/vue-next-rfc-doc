@@ -1,4 +1,4 @@
-# 自定义元素的互通性
+# 27. 自定义元素的互通性
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0027-custom-elements-interop.md>
 

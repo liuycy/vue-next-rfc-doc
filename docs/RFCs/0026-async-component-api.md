@@ -1,4 +1,4 @@
-# 异步组件 API
+# 26. 异步组件 API
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0026-async-component-api.md>
 
