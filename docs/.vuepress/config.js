@@ -70,7 +70,8 @@ module.exports = {
             "0022-router-merge-meta-routelocation",
             "0023-scoped-styles-changes",
             "0024-attribute-coercion-behavior",
-            "0025-teleport"
+            "0025-teleport",
+            "0026-async-component-api"
           ]
         }
       ]
