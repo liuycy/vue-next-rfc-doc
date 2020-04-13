@@ -33,7 +33,7 @@ router.beforeEach((to, from, next) => {
 })
 ```
 
-我建议合并从上到下匹配到的所有路由的 meta, 这样就能直接访问 `to.matched.requiresAuth`. 我认为 Nuxt 就是这样做的, 但我在文档中没找到相关说明.
+我建议合并从上到下匹配到的所有路由的 meta, 这样就能直接访问 `to.meta.requiresAuth`. 我认为 Nuxt 就是这样做的, 但我在文档中没找到相关说明.
 
 ## 基本用例
 
