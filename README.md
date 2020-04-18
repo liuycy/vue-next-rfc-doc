@@ -40,5 +40,6 @@
     ├── 0024-attribute-coercion-behavior.md
     ├── 0025-teleport.md
     ├── 0026-async-component-api.md
-    └── 0027-custom-elements-interop.md
+    ├── 0027-custom-elements-interop.md
+    └── 0028-router-active-link.md
 ```
