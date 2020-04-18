@@ -4,25 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Vue Composition API</title>
-    <meta name="description" content="">
-    <meta name="generator" content="VuePress 1.3.1">
+    <meta name="generator" content="VuePress 1.4.1">
     <link rel="icon" href="/vue-next-rfc-doc/logo.png">
-  <link rel="manifest" href="/vue-next-rfc-doc/manifest.json">
-  <meta name="theme-color" content="#3eaf7c">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="apple-touch-icon" href="/vue-next-rfc-doc/icons/apple-touch-icon-152x152.png">
-  <link rel="mask-icon" href="/vue-next-rfc-doc/icons/safari-pinned-tab.svg" color="#3eaf7c">
-  <meta name="msapplication-TileImage" content="/icons/msapplication-icon-144x144.png">
-  <meta name="msapplication-TileColor" content="#000000">
-    
-    <link rel="preload" href="/vue-next-rfc-doc/assets/css/0.styles.7245feb6.css" as="style"><link rel="preload" href="/vue-next-rfc-doc/assets/js/app.326ec96b.js" as="script"><link rel="preload" href="/vue-next-rfc-doc/assets/js/5.25c6c858.js" as="script"><link rel="preload" href="/vue-next-rfc-doc/assets/js/3.fd14f06a.js" as="script"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/10.c3b29421.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/11.4f8fc188.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/12.159bd57c.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/13.f4af315e.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/14.d19a4a34.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/15.2fe5398e.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/16.3aedc297.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/17.1ac9696d.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/18.f552b769.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/19.1079a0cb.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/2.bca294f8.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/20.fe19bddb.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/21.9ebdaa75.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/22.4657af98.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/23.94ebecaf.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/24.763146a7.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/25.a512d56d.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/26.072dded0.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/27.9ac2772e.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/28.87a41e56.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/4.c0ec6464.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/6.ff47562d.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/7.e3a2a696.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/8.e318cab5.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/9.006cb4a0.js">
-    <link rel="stylesheet" href="/vue-next-rfc-doc/assets/css/0.styles.7245feb6.css">
+    <link rel="manifest" href="/vue-next-rfc-doc/manifest.json">
+    <link rel="apple-touch-icon" href="/vue-next-rfc-doc/icons/apple-touch-icon-152x152.png">
+    <link rel="mask-icon" href="/vue-next-rfc-doc/icons/safari-pinned-tab.svg" color="#3eaf7c">
+    <meta name="description" content="">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileImage" content="/icons/msapplication-icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#000000">
+    <link rel="preload" href="/vue-next-rfc-doc/assets/css/0.styles.cf1b8447.css" as="style"><link rel="preload" href="/vue-next-rfc-doc/assets/js/app.6da86061.js" as="script"><link rel="preload" href="/vue-next-rfc-doc/assets/js/5.dbe5f43d.js" as="script"><link rel="preload" href="/vue-next-rfc-doc/assets/js/3.033f28e2.js" as="script"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/10.44ccc906.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/11.152b8729.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/12.e6ab691a.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/13.ba7e4fad.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/14.1dc30023.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/15.bef8526b.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/16.8f34d5e5.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/17.199a7782.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/18.4c323be9.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/19.19f8b0d9.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/2.f670e6b3.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/20.3f05c0dc.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/21.cb53ccfa.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/22.82667d1a.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/23.0860caf2.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/24.1fc1efec.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/25.10fae7d3.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/26.4482ac0f.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/27.f77843e9.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/28.bab8d959.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/29.57d6ac6b.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/30.79ec083e.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/31.7606bb46.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/32.fe0bf418.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/33.451a5547.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/34.231bcfb8.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/35.5c615eb0.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/36.1a73bce4.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/4.5091951d.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/6.8d8745e4.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/7.af1acdd5.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/8.8db4bd63.js"><link rel="prefetch" href="/vue-next-rfc-doc/assets/js/9.f978a30c.js">
+    <link rel="stylesheet" href="/vue-next-rfc-doc/assets/css/0.styles.cf1b8447.css">
   </head>
   <body>
-    <div id="app" data-server-rendered="true"><div class="theme-container"><div class="theme-default-content"><h1>404</h1> <blockquote>How did we get here?</blockquote> <a href="/vue-next-rfc-doc/" class="router-link-active">
+    <div id="app" data-server-rendered="true"><div class="theme-container"><div class="theme-default-content"><h1>404</h1> <blockquote>There's nothing here.</blockquote> <a href="/vue-next-rfc-doc/" class="router-link-active">
       Take me home.
     </a></div></div><div class="global-ui"><!----></div></div>
-    <script src="/vue-next-rfc-doc/assets/js/app.326ec96b.js" defer></script><script src="/vue-next-rfc-doc/assets/js/5.25c6c858.js" defer></script><script src="/vue-next-rfc-doc/assets/js/3.fd14f06a.js" defer></script>
+    <script src="/vue-next-rfc-doc/assets/js/app.6da86061.js" defer></script><script src="/vue-next-rfc-doc/assets/js/5.dbe5f43d.js" defer></script><script src="/vue-next-rfc-doc/assets/js/3.033f28e2.js" defer></script>
   </body>
 </html>
