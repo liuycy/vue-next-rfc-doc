@@ -75,7 +75,8 @@ module.exports = {
             "0027-custom-elements-interop",
             "0028-router-active-link",
             "0029-router-dynamic-routing",
-            "0030-emits-option"
+            "0030-emits-option",
+            "0031-attr-fallthrough"
           ]
         }
       ]

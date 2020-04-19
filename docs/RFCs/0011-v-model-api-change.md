@@ -169,4 +169,4 @@ TODO
 
 这样就可以告诉 Vue 需要使用 `<input type="checkbox">` 一样的逻辑, `checked` 作为属性, `change` 作为事件
 
-如果自定义属性没有标记任何已知的 input type, 最好使用 `v-bind` 和 `v-on` 显示绑定. 
+如果自定义属性没有标记任何已知的 input type, 最好使用 `v-bind` 和 `v-on` 显式绑定. 

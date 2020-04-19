@@ -167,7 +167,7 @@ const FunctionalComp = (props, { slots, attrs, emit }) => {
 - `props` 和 `slots` 有对应的值
 - 不再需要 `data` 和 `children` (可以用 `props` 和 `slots`)
 - `listeners` 会被包含在 `attrs`
-- `injections` 可以被新的 `inject` API 取代 (详见 [Composition API](./api.html#provide-inject)):
+- `injections` 可以被新的 `inject` API 取代 (详见 [Composition API](../API.md#provide-inject)):
 
   ``` js
   import { inject } from 'vue'

@@ -38,7 +38,7 @@ const Comp = {
 
 - **IDE 支持:** 在组件上使用 `v-on` 时, IDE 可以利用 `emits` 选项来提供自动填写.
 
-- **监听器扑空控制:** 随着 attribute 扑空逻辑的变更, 默认情况下组件上的 `v-on` 监听器扑空了会注册为原生事件. 为了避免注册不必要的原生事件, 可以利用 `emits` 声明只注册组件事件.
+- **监听器回退控制:** 随着 attribute 回退逻辑的变更, 默认情况下组件上的 `v-on` 监听器回退了会注册为原生事件. 为了避免注册不必要的原生事件, 可以利用 `emits` 声明只注册组件事件.
 
 ## 设计细节
 
@@ -80,9 +80,9 @@ const Comp = {
 }
 ```
 
-### 扑空控制
+### 回退控制
 
-[#154](https://github.com/vuejs/rfcs/pull/154) 提到的新的 [Attribute 扑空行为](https://github.com/vuejs/rfcs/blob/amend-optional-props/active-rfcs/0000-attr-fallthrough.md) 指出在组件上使用 `v-on` 会自动处理扑空:
+[#154](https://github.com/vuejs/rfcs/pull/154) 提到的新的 [Attribute 回退行为](https://github.com/vuejs/rfcs/blob/amend-optional-props/active-rfcs/0000-attr-fallthrough.md) 指出在组件上使用 `v-on` 会自动处理回退:
 
 ```html
 <Foo @click="onClick" />
@@ -127,7 +127,7 @@ const Foo = defineComponent({
 
 引入 `emits` 选项不应该破坏任何 `$emit` 的用法.
 
-但是, 随着扑空行为的变更, 每次都定义要触发的事件会比较理想. 我们可以:
+但是, 随着回退行为的变更, 每次都定义要触发的事件会比较理想. 我们可以:
 
 1. 提供一个 codemod 脚本自动扫描所有组件实例的 `$emit` 调用, 并生成 `emits` 选项.
 
