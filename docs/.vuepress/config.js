@@ -74,7 +74,8 @@ module.exports = {
             "0026-async-component-api",
             "0027-custom-elements-interop",
             "0028-router-active-link",
-            "0029-router-dynamic-routing"
+            "0029-router-dynamic-routing",
+            "0030-emits-option"
           ]
         }
       ]
