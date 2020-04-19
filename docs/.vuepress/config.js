@@ -36,7 +36,7 @@ module.exports = {
     "@vuepress/pwa": {
       serviceWorker: true,
       updatePopup: {
-        message: "发现新内容可用",
+        message: "发现新章节",
         buttonText: "刷新"
       }
     }
@@ -73,7 +73,8 @@ module.exports = {
             "0025-teleport",
             "0026-async-component-api",
             "0027-custom-elements-interop",
-            "0028-router-active-link"
+            "0028-router-active-link",
+            "0029-router-dynamic-routing"
           ]
         }
       ]

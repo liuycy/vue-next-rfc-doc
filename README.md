@@ -41,5 +41,6 @@
     ├── 0025-teleport.md
     ├── 0026-async-component-api.md
     ├── 0027-custom-elements-interop.md
-    └── 0028-router-active-link.md
+    ├── 0028-router-active-link.md
+    └── 0029-router-dynamic-routing.md
 ```
