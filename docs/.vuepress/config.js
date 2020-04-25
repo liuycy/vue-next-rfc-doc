@@ -48,6 +48,7 @@ module.exports = {
           title: "RFCs",
           collapsable: false,
           children: [
+            "0000-vtu-improve-async-workflow",
             "0001-new-slot-syntax",
             "0002-slot-syntax-shorthand",
             "0003-dynamic-directive-arguments",

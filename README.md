@@ -4,7 +4,11 @@
 
 内容上基本与原文一致, 如果你在阅读时觉得哪里读起来不太顺畅, 欢迎在 [issues](https://github.com/liuycy/vue-next-rfc-doc/issues) 中讨论, 或提交 [PR](https://github.com/liuycy/vue-next-rfc-doc/pulls) 进行修改. 
 
-这次翻译文档使用 [VuePress](https://vuepress.vuejs.org/zh/) 构建静态网站, 并结合 [Github Actions](https://help.github.com/cn/actions) 自动化部署在 [GitHub Pages](https://help.github.com/cn/github/working-with-github-pages) 上. 可点击[在线地址](https://liuycy.github.io/vue-next-rfc-doc/)查看. 
+这次翻译文档使用 [VuePress](https://vuepress.vuejs.org/zh/) 构建静态网站, 并结合 [Github Actions](https://help.github.com/cn/actions) 自动化部署在 [GitHub Pages](https://help.github.com/cn/github/working-with-github-pages) 上. 
+
+## 文档地址
+
+👉 <https://liuycy.github.io/vue-next-rfc-doc/>
 
 ## 如何持续更新
 
@@ -26,6 +30,7 @@ Github 官方提供了仓库 Commits 的 RSS 格式为: `https://github.com/:own
 ├── index.md    # Composition API RFC (首页)
 ├── API.md      # Composition API Reference
 └── RFCs        # active RFCs
+    ├── 0000-vtu-improve-async-workflow.md
     ├── 0001-new-slot-syntax.md
     ├── 0002-slot-syntax-shorthand.md
     ├── 0003-dynamic-directive-arguments.md
