@@ -1,18 +1,21 @@
 ---
 sidebar: auto
+sidebarDepth: 2
 ---
 
 # API 文档
+
+> 原文: <https://vue-composition-api-rfc.netlify.app/api.html>
 
 ## `setup`
 
 `setup` 函数是一个新的组件选项, 它是组件内部 Composition API 的入口函数.
 
-### 调用时机
+- **调用时机**
 
   创建组件时, `setup` 会在初始 `props` 解析完成后立即调用. 它会在生命周期 `beforeCreate` 之前被调用.
 
-### 模板的用法
+- **模板的用法**
 
   `setup` 返回的对象中的属性会被绑定到模板的上下文中: 
 
@@ -41,7 +44,7 @@ sidebar: auto
 
   注意: 返回的 refs 在模板中会自动展开, 所以不需要使用 `.value`
 
-### Render 函数 / JSX 的用法
+- **Render 函数 / JSX 的用法**
 
   `setup` 也可以返回一个 render 函数, 直接使用同一作用域中的响应式变量:  
 
@@ -61,7 +64,7 @@ sidebar: auto
   }
   ```
 
-### 参数
+- **参数**
 
   函数的第一个参数是解析好的 props
 
@@ -139,7 +142,7 @@ sidebar: auto
 
 
 
-### this 的用法
+- **this 的用法**
 
   在 `setup()` 函数内用不了 `this`, 因为 `setup()` 会在 2.x 版本所有选项解析完成之前调用.
   `this` (如果可用)会跟其他选项中的表现得完全不一样, `setup` 和其他选项一起用的时候, `this` 表现得不一样会让人很懵逼的. 
@@ -154,6 +157,7 @@ sidebar: auto
   ```
 
 - **类型定义**
+  
   ```ts
   interface Data {
     [key: string]: unknown
@@ -188,6 +192,7 @@ const obj = reactive({ count: 0 })
 建议只使用这个返回响应式代理对象, 不要对传入的原对象做任何操作.
 
 - **类型定义**
+  
   ```ts
   function reactive<T extends object>(raw: T): T
   ```
@@ -206,7 +211,7 @@ console.log(count.value) // 1
 
 如果传入的是一个对象作为内部值, 那么这个对象会先被 `reactive` 转换. 
 
-### 在模板中使用
+- **在模板中使用**
   
   在模板中使用一个 `setup()` 返回 `ref` 对象时, 它会自动展开, 不需要使用 `.value` 去访问它的内部值: 
 
@@ -607,7 +612,7 @@ copy.count++ // 警告!
   }
   ```
 
-## `Lifecycle Hooks`
+## 生命周期
 
 生命周期钩子可以通过导入`onXXX`函数直接注册: 
 
@@ -742,7 +747,8 @@ const Descendent = {
   const foo = inject<number>('foo') // number | undefined
   ```
 
-## `Template Refs`
+## 模板 Refs
+
 使用 Composition API 时, _reactive refs_ 和 _template refs_ 的概念是统一的. 
 我们需要在 `setup()` 中定义一个 ref 并返回给模板, 这样就可以通过 ref 来拿到一个 DOM 或 组件实例的引用了: 
 
@@ -829,7 +835,7 @@ export default {
   </script>
   ```
 
-## 响应式工具
+## 响应式工具函数
 
 ### `unref`
 
@@ -870,7 +876,7 @@ export default {
 }
 ```
 
-## `toRefs`
+### `toRefs`
 
 传入一个响应式对象, 返回所有属性被转换成 ref 对象的普通对象:
 
@@ -1055,7 +1061,7 @@ state.nested.bar++ // 非响应式的
 
 ### `shallowReadonly`
 
-Create a proxy that makes its own properties readonly, but does not perform deep readonly conversion of nested objects (exposes raw values).
+创建一个只有自身属性只读的代理对象, 但不对内嵌对象进行深度只读转换 (即暴露原始对象).
 
 ```js
 const state = shallowReadonly({
@@ -1064,28 +1070,28 @@ const state = shallowReadonly({
     bar: 2
   }
 })
-// mutating state's own properties will fail
+// 修改 state 自身的属性会失败
 state.foo++
-// ...but works on nested objects
+// 但可以修改内嵌对象
 isReadonly(state.nested) // false
-state.nested.bar++ // works
+state.nested.bar++ // 成功
 ```
 
 ### `shallowRef`
 
-Create a ref that tracks its own `.value` mutation but doesn't make its value reactive.
+创建一个能够跟踪 `.value` 变化但却使其 value 非响应式的 ref.
 
 ```js
 const foo = shallowRef({})
-// mutating the ref's value is reactive
+// 修改 ref 的 value 是可响应的
 foo.value = {}
-// but the value will not be converted.
+// 不过其 value 没有被转换.
 isReactive(foo.value) // false
 ```
 
 ### `toRaw`
 
-Return the raw, original object of a `reactive` or `readonly` proxy. This is an escape hatch that can be used to temporarily read without incurring proxy access / tracking overhead or write without triggering changes. It is **not** recommended to hold a persistent reference to the original object. Use with caution.
+返回 `reactive` 或 `readonly` 代理对象的原始对象. 这是一种应急用法, 可以在读取时不触发代理对象的访问/跟踪, 修改时不触发变更. **不建议**永久持有转换后的原始对象. 请谨慎使用.
 
 ```js
 const foo = {}
