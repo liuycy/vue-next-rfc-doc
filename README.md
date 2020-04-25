@@ -1,11 +1,22 @@
-# Vue Next RFCs 中文翻译
+# Vue Next 相关文档中文翻译
 
-> 由于英文水平有限, 每次看[原文](https://vue-composition-api-rfc.netlify.com/)都比较费劲, 所以参考[尤雨溪在知乎上的翻译](https://zhuanlan.zhihu.com/p/68477600)简单翻译成中文, 方便下次阅读. 
-> 内容上基本与原文一致, 部分内容照搬知乎上的翻译, 如果你在阅读时觉得哪里读起来不太顺畅, 欢迎在 [issues](https://github.com/liuycy/vue-next-rfc-doc/issues) 中讨论. 
+本仓库整合了 `Vue 3 的主要 API` [Vue Composition API](https://vue-composition-api-rfc.netlify.com) 和 `Vue 相关库即将发布的特性` [Vue active rfcs](https://github.com/vuejs/rfcs).
 
-> 新增翻译内容 [active rfcs](https://github.com/vuejs/rfcs) 
+内容上基本与原文一致, 如果你在阅读时觉得哪里读起来不太顺畅, 欢迎在 [issues](https://github.com/liuycy/vue-next-rfc-doc/issues) 中讨论, 或提交 [PR](https://github.com/liuycy/vue-next-rfc-doc/pulls) 进行修改. 
 
-这次翻译文档使用 [VuePress](https://vuepress.vuejs.org/) 构建静态网站, 并结合 Github Actions 自动化部署在 GitHub Pages 上. 可点击[在线地址](https://liuycy.github.io/vue-next-rfc-doc/)查看. 
+这次翻译文档使用 [VuePress](https://vuepress.vuejs.org/zh/) 构建静态网站, 并结合 [Github Actions](https://help.github.com/cn/actions) 自动化部署在 [GitHub Pages](https://help.github.com/cn/github/working-with-github-pages) 上. 可点击[在线地址](https://liuycy.github.io/vue-next-rfc-doc/)查看. 
+
+## 如何持续更新
+
+订阅 [vuejs/composition-api-rfc](https://github.com/vuejs/rfcs) 和 [vuejs/rfcs](https://github.com/vuejs/composition-api-rfc) 这两个仓库 master 分支的提交, 即可在官方更新的第一时间收到通知. 这样就可以保持与其一样的同步频率.
+
+Github 官方提供了仓库 Commits 的 RSS 格式为: `https://github.com/:owner/:repo/commits.atom`  
+
+使用任意的 RSS 订阅工具 (我使用了 [Blogtrottr](https://blogtrottr.com/)) 即可获取仓库的提交信息.
+
+这两个仓库的 Commits 的 RSS 为:
+- <https://github.com/vuejs/composition-api-rfc/commits/master.atom>
+- <https://github.com/vuejs/rfcs/commits/master.atom>
 
 ## 目录层级
 
