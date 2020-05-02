@@ -1,6 +1,6 @@
-# 0. vtu 改进异步工作流程
+# 32. vtu 改进异步工作流程
 
-> 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0000-vtu-improve-async-workflow.md>
+> 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0032-vtu-improve-async-workflow.md>
 
 - 开始日期: 2020.02.01
 - 目标版本: VTU beta-0.3x/1.x

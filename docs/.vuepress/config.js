@@ -48,7 +48,6 @@ module.exports = {
           title: "RFCs",
           collapsable: false,
           children: [
-            "0000-vtu-improve-async-workflow",
             "0001-new-slot-syntax",
             "0002-slot-syntax-shorthand",
             "0003-dynamic-directive-arguments",
@@ -77,7 +76,9 @@ module.exports = {
             "0028-router-active-link",
             "0029-router-dynamic-routing",
             "0030-emits-option",
-            "0031-attr-fallthrough"
+            "0031-attr-fallthrough",
+            "0032-vtu-improve-async-workflow",
+            "0033-router-navigation-failures"
           ]
         }
       ]

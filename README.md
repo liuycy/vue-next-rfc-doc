@@ -30,7 +30,6 @@ Github 官方提供了仓库 Commits 的 RSS 格式为: `https://github.com/:own
 ├── index.md    # Composition API RFC (首页)
 ├── API.md      # Composition API Reference
 └── RFCs        # active RFCs
-    ├── 0000-vtu-improve-async-workflow.md
     ├── 0001-new-slot-syntax.md
     ├── 0002-slot-syntax-shorthand.md
     ├── 0003-dynamic-directive-arguments.md
@@ -60,5 +59,7 @@ Github 官方提供了仓库 Commits 的 RSS 格式为: `https://github.com/:own
     ├── 0028-router-active-link.md
     ├── 0029-router-dynamic-routing.md
     ├── 0030-emits-option.md
-    └── 0031-attr-fallthrough.md
+    ├── 0031-attr-fallthrough.md
+    ├── 0032-vtu-improve-async-workflow.md
+    └── 0033-router-navigation-failures.md
 ```
