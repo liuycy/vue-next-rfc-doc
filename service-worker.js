@@ -27,11 +27,11 @@ self.addEventListener('message', (event) => {
 self.__precacheManifest = [
   {
     "url": "404.html",
-    "revision": "2cd25cc5fd58f97e1260c09aab5a72fd"
+    "revision": "0d48e6ad1a7648ba866a2bb1cdf05771"
   },
   {
     "url": "API.html",
-    "revision": "509827f78f9e925c9c4a914edbc7beaf"
+    "revision": "895b6bca6c90b7960a7393f3e63bd55c"
   },
   {
     "url": "assets/css/0.styles.cf1b8447.css",
@@ -42,12 +42,12 @@ self.__precacheManifest = [
     "revision": "83621669651b9a3d4bf64d1a670ad856"
   },
   {
-    "url": "assets/js/10.edce64e2.js",
-    "revision": "db6acc3ffa9b990055782afc7fd061aa"
+    "url": "assets/js/10.44ccc906.js",
+    "revision": "e067a3c5952107c634b31db7d9df2a78"
   },
   {
-    "url": "assets/js/11.2f2c23f1.js",
-    "revision": "c48595a91ccbb52da60d0c605c3f109f"
+    "url": "assets/js/11.152b8729.js",
+    "revision": "9b21c08222ad67c4ffac30819e62987c"
   },
   {
     "url": "assets/js/12.e6ab691a.js",
@@ -110,8 +110,8 @@ self.__precacheManifest = [
     "revision": "06996956c8112e1ba1176f06aaa62983"
   },
   {
-    "url": "assets/js/26.4482ac0f.js",
-    "revision": "dd710b4d668a7f6702de4f3e6388374a"
+    "url": "assets/js/26.0322f462.js",
+    "revision": "c4ac785a71bba2bd5662bfc2d175a3d0"
   },
   {
     "url": "assets/js/27.f77843e9.js",
@@ -190,20 +190,20 @@ self.__precacheManifest = [
     "revision": "a521c17fa28473b66e435f2703714e24"
   },
   {
-    "url": "assets/js/7.51be05b9.js",
-    "revision": "e1223857b1e68fd32133f797b9b241e4"
+    "url": "assets/js/7.af1acdd5.js",
+    "revision": "8f4a28d808dc21ee9890bf2aae7b57ce"
   },
   {
-    "url": "assets/js/8.0fb31109.js",
-    "revision": "5a05b067e443677a8d1ba133ca8a5bd7"
+    "url": "assets/js/8.8db4bd63.js",
+    "revision": "b4a7ed50a98b2f806ee11c584bd18d97"
   },
   {
-    "url": "assets/js/9.1d1211cf.js",
-    "revision": "5f3f1d033a346a988f85731714ae6b87"
+    "url": "assets/js/9.f978a30c.js",
+    "revision": "70cb70f1bf58751af1be4558d08ab33b"
   },
   {
-    "url": "assets/js/app.a2f8132c.js",
-    "revision": "55936111e853b1c74923eb76a4621fc6"
+    "url": "assets/js/app.9cf5130e.js",
+    "revision": "7c3c39c563849e47dd9d8f7926d6b1cb"
   },
   {
     "url": "icons/android-chrome-192x192.png",
@@ -259,7 +259,7 @@ self.__precacheManifest = [
   },
   {
     "url": "index.html",
-    "revision": "9c919902a29d14b703b6a73c66c95d96"
+    "revision": "9e647f2f0c99a31380c5def7c5eb8421"
   },
   {
     "url": "logo.png",
@@ -267,131 +267,131 @@ self.__precacheManifest = [
   },
   {
     "url": "RFCs/0001-new-slot-syntax.html",
-    "revision": "e3c764dbbec34d710c749e0cd995ee02"
+    "revision": "9e3374642d45a0406118653daedd981c"
   },
   {
     "url": "RFCs/0002-slot-syntax-shorthand.html",
-    "revision": "9d8e42ad90a354f30587fb5c302e49e8"
+    "revision": "40c5c3388d21e623085825d77d982ed1"
   },
   {
     "url": "RFCs/0003-dynamic-directive-arguments.html",
-    "revision": "aba0b6a40bc01255833cdfef80e243a0"
+    "revision": "5f6a6b36493daad0140c3aa0c37d6b8d"
   },
   {
     "url": "RFCs/0004-global-api-treeshaking.html",
-    "revision": "012fc8642f979ad2739d671e39e259b8"
+    "revision": "2eba199ac82fc2190856450b11bbb42d"
   },
   {
     "url": "RFCs/0005-replace-v-bind-sync-with-v-model-argument.html",
-    "revision": "ca8301be14dc04c42df549490f446cc4"
+    "revision": "c16367d023f631e610dd76cd3f28dadd"
   },
   {
     "url": "RFCs/0006-slots-unification.html",
-    "revision": "498819ee774852374127e29b3479bc4c"
+    "revision": "ec15b2a5c8d6787626c5076b268cf081"
   },
   {
     "url": "RFCs/0007-functional-async-api-change.html",
-    "revision": "0302c983955e2671698c5d1faed9f87c"
+    "revision": "ac9f523e2b65e1c923abd82f9bbb93fb"
   },
   {
     "url": "RFCs/0008-render-function-api-change.html",
-    "revision": "1dacfd25f04de36dec8b4e98e55a9477"
+    "revision": "c158b2b93d1860736fb266b315e7b7c0"
   },
   {
     "url": "RFCs/0009-global-api-change.html",
-    "revision": "25077ffafce24375ab559e77ed07566a"
+    "revision": "cb1b4c6a1435d5d53df37548de0f5a71"
   },
   {
     "url": "RFCs/0010-optional-props-declaration.html",
-    "revision": "db57525554e895f61147821139660a97"
+    "revision": "9c68fd8b2cb4039c076dc632a1e328aa"
   },
   {
     "url": "RFCs/0011-v-model-api-change.html",
-    "revision": "79eeb6ad37a66aa8e4c54da23d674dca"
+    "revision": "399f55ad96482eee497ab20280a3e3db"
   },
   {
     "url": "RFCs/0012-custom-directive-api-change.html",
-    "revision": "433dc146356d9b9b60f03fc6dc1260e9"
+    "revision": "e942adc64bff68f422362dd6591a9d90"
   },
   {
     "url": "RFCs/0014-drop-keycode-support.html",
-    "revision": "46a612917d0b53ff99c266865cb110e7"
+    "revision": "279c1b5a78cbbb32a23401a1d0021b3c"
   },
   {
     "url": "RFCs/0015-remove-filters.html",
-    "revision": "b748f40bfe3a36482bf3ca3873770d53"
+    "revision": "e5f2ea930f0b824efbbfaf6392ee9dac"
   },
   {
     "url": "RFCs/0016-remove-inline-templates.html",
-    "revision": "98ba153ccd61ed8bd31e12037358779b"
+    "revision": "58e4f41ce2b5b8149599b666afce090e"
   },
   {
     "url": "RFCs/0017-transition-as-root.html",
-    "revision": "55366672fe4783b1b3b2eda72ba89256"
+    "revision": "0690078986be008481af8ec59ae2d4d7"
   },
   {
     "url": "RFCs/0018-transition-class-change.html",
-    "revision": "135a7c70e47c722a138e7b4ae0c36847"
+    "revision": "bb1ef7eb9c665dc47b58abe275380545"
   },
   {
     "url": "RFCs/0019-remove-data-object-declaration.html",
-    "revision": "d80f3a04567bf0bba14bc7b5e9d82fc5"
+    "revision": "30f39f92a2604b8abdd559c93dd0dc10"
   },
   {
     "url": "RFCs/0020-events-api-change.html",
-    "revision": "98d4ea81928e71a8dd001f8a684528b5"
+    "revision": "73db1485db3071a800a6a5be907751d2"
   },
   {
     "url": "RFCs/0021-router-link-scoped-slot.html",
-    "revision": "df85af9729ffca943f9f66d7de72374b"
+    "revision": "cac9e0ba49f258d8a5c871390183477a"
   },
   {
     "url": "RFCs/0022-router-merge-meta-routelocation.html",
-    "revision": "ff1eb332fd74369e3531869f99378c20"
+    "revision": "d7258377a4931ddf0a601c79fb3c0fa5"
   },
   {
     "url": "RFCs/0023-scoped-styles-changes.html",
-    "revision": "4969c191d8f31f670319fc960cecac12"
+    "revision": "106b9bfe43043ea6f66694e43873d9f8"
   },
   {
     "url": "RFCs/0024-attribute-coercion-behavior.html",
-    "revision": "1bddd8e11718acc8e1e535f36cfc062a"
+    "revision": "835ca8660bea93a1e55fed9fadff9db2"
   },
   {
     "url": "RFCs/0025-teleport.html",
-    "revision": "722dddcd3a1eaae9558f5fd151a8143c"
+    "revision": "a7476b0e46c5585d79eca61c867f80c3"
   },
   {
     "url": "RFCs/0026-async-component-api.html",
-    "revision": "69d3044d28b6db2ed8de948654cc5659"
+    "revision": "8d006787205e5768d6fa2c3f22cc063c"
   },
   {
     "url": "RFCs/0027-custom-elements-interop.html",
-    "revision": "021201fd9e203741ee41be0c4355e915"
+    "revision": "0ad3f139aeef86516bc79659082c32af"
   },
   {
     "url": "RFCs/0028-router-active-link.html",
-    "revision": "4e5d666db0fe7127466e19a54e93b53a"
+    "revision": "c0e59fd326402413501705a068a74eec"
   },
   {
     "url": "RFCs/0029-router-dynamic-routing.html",
-    "revision": "6162045cb69aaf8ea28572a3cc506fcf"
+    "revision": "291936368559fd808b9380495de112c5"
   },
   {
     "url": "RFCs/0030-emits-option.html",
-    "revision": "689ce68ba4a4e7da88b1e8c874b8514c"
+    "revision": "8a5ed5881af3830c69a85cc046cecc49"
   },
   {
     "url": "RFCs/0031-attr-fallthrough.html",
-    "revision": "e2c10adf708e405612033145f627337e"
+    "revision": "73b5eb45652a767de900990673cf65c8"
   },
   {
     "url": "RFCs/0032-vtu-improve-async-workflow.html",
-    "revision": "e3b9429019c9096f76d6c2bb08e7dfdf"
+    "revision": "5ae484b61895a3492b6bc3ed76d6b608"
   },
   {
     "url": "RFCs/0033-router-navigation-failures.html",
-    "revision": "9ae666b9ac50fe7674a740bb4fc3d6a5"
+    "revision": "66db3e04849f530124d72c81bb8bb103"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
