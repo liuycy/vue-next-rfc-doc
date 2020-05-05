@@ -13,6 +13,7 @@
 - 移除 `event` 属性
 - 不再自动绑定点击事件到内部锚点标签
 - 新增作用域插槽 API
+- 新增 `custom` prop, 可以完全地自定义 `router-link` 的渲染
 
 ## 基本用例
 
@@ -59,36 +60,14 @@ Router Link 当前实现有很多限制:
 - 不再接收 `event` -> 使用作用域插槽代替
 - 不再作为自动寻找内部第一个 `<a>` 的包装器 -> 使用作用域插槽代替
 
-### 自定义 `tag` 属性
-
-如果能被作用域插槽代替的话, 我不确定是否要保留 `tag` 属性, 因为这个属性无法处理自定义组件除非是非常简单的, 但我们可能会用到自定义的 UI 组件而非基础用例: 
-
-```vue
-<router-link to="/" tag="button">
-  <Icon>home</Icon><span class="xs-hidden">Home</span>
-</router-link>
-```
-
-相当于是: 
-
-```vue
-<router-link to="/" v-slot="{ navigate, isActive, isExactActive }">
-  <button role="link" @click="navigate" :class="{ active: isActive, 'exact-active': isExactActive }">
-    <Icon>home</Icon><span class="xs-hidden">Home</span>
-  </button>
-</router-link>
-```
-
-(有关作用域插槽属性的说明, 请参阅下面)
-
 ### 作用域插槽
 
 作用域插槽能获取到自定义集成所需的任何信息, 并允许在任意层级使用 active 相关的 class, 点击事件的监听, links 等. 
-这样可以更好地与 [Bootstrap](https://getbootstrap.com/docs/4.3/components/navbar/) 之类的框架集成. 
+这样可以更好地与 [Bootstrap](https://getbootstrap.com/docs/4.3/components/navbar/) 之类的 UI 框架集成. 
 这样就可以避免像 [bootstrap-vue](https://bootstrap-vue.js.org/docs/components/navbar/#navbar) 那样写一堆样板代码
 
 ```vue
-<router-link to="/" v-slot="{ href, navigate, isActive }">
+<router-link to="/" custom v-slot="{ href, navigate, isActive }">
   <li :class="{ 'active': isActive }">
     <a :href="href" @click="navigate">
       <Icon>home</Icon><span class="xs-hidden">Home</span>
@@ -96,6 +75,31 @@ Router Link 当前实现有很多限制:
   </li>
 </router-link>
 ```
+
+
+要完全控制 `router-link` 的渲染必须使用 `custom` prop: 可以让渲染内容不被 `a` 元素包裹.
+
+**为什么必须使用 `custom` prop**: 在 Vue 3 中, 作用域插槽和普通插槽区别不大, 也就说 vue router 无法区分以下 3 种情况:
+
+```vue
+<router-link to="/" v-slot="{ href, navigate, isActive }"></router-link>
+<router-link to="/" v-slot></router-link>
+<router-link to="/">Some Link</router-link>
+```
+
+虽然这三种情况都能渲染插槽内容, 但 `router-link` 需要知道是否需要使用 `a` 元素包裹内容. 在 Vue 2 种, 我们可以通过检测 `$scopedSlots` 来实现, 不过在 Vue 3 中, 只剩 `slots` 了. 也就说 Vue Router v3 和 Vue Router v4 的行为会略有不同:
+
+- 在 v3 中, 和 `v-slot` 一起用的时候, `custom` prop 是必须的 (详见 [升级策略](#升级策略)). `router-link` 不会使用 `a` 元素包裹插槽内容.
+- 在 v4 中, 和 `v-slot` 一起用的时候, `custom` prop **不是** 必须的. 它只是用来控制 `router-link` 是否应该使用 `a` 元素来包裹插槽内容:
+  ```vue
+  <router-link to="/" v-slot="{ href }">
+  <router-link to="/" custom v-slot="{ href, navigate }">
+    <a :href="href" @click="navigate">{{ href }}</a>
+  </router-link>
+  <!-- 都会渲染成下面这样 -->
+  <a href="/">/</a>
+  <a href="/">/</a>
+  ```
 
 #### 可访问变量
 
@@ -107,6 +111,28 @@ Router Link 当前实现有很多限制:
 - `isActive`: 当应用 `router-link-active` 时为 true, 可以被 `exact` 属性修改
 - `isExactActive`: 当应用 `router-link-exact-active` 时为 true, 可以被 `exact` 属性修改.
 
+### 移除 `tag` prop
+
+`tag` prop 可以被作用域插槽完美地取代, 而且代码也更加清晰. 移除这个 prop 可以减小 vue-router 库的体积.
+
+```vue
+<router-link to="/" tag="button">
+  <Icon>home</Icon><span class="xs-hidden">Home</span>
+</router-link>
+```
+
+相当于
+
+```vue
+<router-link to="/" custom v-slot="{ navigate, isActive, isExactActive }">
+  <button role="link" @click="navigate" :class="{ active: isActive, 'exact-active': isExactActive }">
+    <Icon>home</Icon><span class="xs-hidden">Home</span>
+  </button>
+</router-link>
+```
+
+(想知道作用域插槽可以传递哪些参数可以往上翻翻)
+
 ## 缺点
 
 - 虽然可以保持现有的行为正常工作且只暴露作用域插槽为新行为, 但是仍会阻碍我们使用这个实现来修复现有的问题. 所以会引入一些破坏性更改来保持一致性.
@@ -115,10 +141,26 @@ Router Link 当前实现有很多限制:
 ## 备选方案
 
 - 为了方便保留 `event` 属性
+- 使用命名插槽取代 `prop`:
 
+  ```vue
+  <router-link #custom="{ href }">
+    <a :href="href"></a>
+  </router-link>
+  <router-link v-slot:custom="{ href }">
+    <a :href="href"></a>
+  </router-link>
+  <router-link custom v-slot="{ href }">
+    <a :href="href"></a>
+  </router-link>
+  ```
+
+  这种情况下升级策略就比较类似了, 抛出的警告会告诉用户使用命名插槽来替换 `custom` prop. 
+
+- 内置一个新组建 `router-link-custom` 来区分这种行为. 不过这种方案比起 prop 和 命名插槽 更重(就体积而言). 相比之下 prop 更加合适, 因为我们只是改变组件的行为. 两个组件间差异太小, 没有必要内置这个新组件.
+  
 ## 升级策略
 
 - 根据用例为新行为编写文档
 - 弃用 `tag` 和 `event` 抛出一条信息并链接到 v4 中的已移除文档
-
-## 未解决问题
+- 在 v3 中, 如果在使用作用域插槽时没有指定 `custom` prop, 会抛出一个警告提示用户使用 `custom` prop
