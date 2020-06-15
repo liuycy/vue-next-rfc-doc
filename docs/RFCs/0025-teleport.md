@@ -1,4 +1,4 @@
-# 25. teleport 组件
+# 25. &lt;teleport&gt; 组件
 
 > 原文: <https://github.com/vuejs/rfcs/blob/master/active-rfcs/0025-teleport.md>
 
